@@ -1,0 +1,11 @@
+# Core
+numpy
+pandas
+sentence-transformers
+faiss-cpu
+
+# OpenAI embeddings backend (optional)
+openai
+
+# Loads `.env` into the environment before `src.config` reads OPENAI_API_KEY
+python-dotenv

@@ -5,10 +5,12 @@ __pycache__/
 
 data/raw/*
 !data/raw/.gitkeep
+
 data/processed/*
 !data/processed/.gitkeep
+
 data/vector_store/*
-!data/vector_store/*
+!data/vector_store/.gitkeep
 
 .ipynb_checkpoints/
 .DS_Store
