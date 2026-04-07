@@ -25,3 +25,8 @@ EMBEDDING_BACKEND = "sentence_transformers"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 # Used when EMBEDDING_BACKEND == "openai" (also set OPENAI_API_KEY).
 OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
+
+# LLM generation (RAG answer step): "openai" | "ollama"
+LLM_BACKEND = "openai"
+OPENAI_MODEL = "gpt-4o-mini"
+OLLAMA_MODEL = "llama3"
