@@ -1,0 +1,17 @@
+Selective rerank policy statistics (eval_mode=auto_selective_rerank)
+============================================================
+
+Total queries (rows): 12
+Rerank applied: 3
+Rerank skipped (no cross-encoder stage): 9
+
+Skip flags (row counts; a row may match multiple categories):
+  rerank_skipped_due_to_query_family: 8
+  rerank_skipped_due_to_metadata_filters: 1
+  rerank_skipped_due_to_confidence: 0
+
+Percentages (denominator = total selective rows):
+  Queries reranked: 25.0%
+  Rows with skip_family flag: 66.7%
+  Rows with skip_metadata flag: 8.3%
+  Rows with skip_confidence flag: 0.0%

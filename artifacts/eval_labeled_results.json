@@ -1,0 +1,167 @@
+{
+  "k": 5,
+  "labeled_file": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/eval/retrieval_labeled_eval.json",
+  "trace_file": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/retrieval_traces/labeled_eval_run.jsonl",
+  "overall": {
+    "vector": {
+      "precision_at_k": 0.2333333333333333,
+      "recall_at_k": 0.6388888888888888,
+      "mrr": 0.6416666666666667,
+      "n_rows": 12
+    },
+    "hybrid": {
+      "precision_at_k": 0.26666666666666666,
+      "recall_at_k": 0.7083333333333334,
+      "mrr": 0.7708333333333334,
+      "n_rows": 12
+    },
+    "auto": {
+      "precision_at_k": 0.2333333333333333,
+      "recall_at_k": 0.6388888888888888,
+      "mrr": 0.6416666666666667,
+      "n_rows": 12
+    },
+    "auto_rerank": {
+      "precision_at_k": 0.21666666666666667,
+      "recall_at_k": 0.6250000000000001,
+      "mrr": 0.6111111111111112,
+      "n_rows": 12
+    },
+    "hybrid_rerank": {
+      "precision_at_k": 0.2333333333333333,
+      "recall_at_k": 0.6527777777777778,
+      "mrr": 0.6111111111111112,
+      "n_rows": 12
+    }
+  },
+  "by_query_family": {
+    "abstract_complaint_summary": {
+      "vector": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "n_rows": 2
+      },
+      "hybrid": {
+        "precision_at_k": 0.1,
+        "recall_at_k": 0.25,
+        "mrr": 0.5,
+        "n_rows": 2
+      },
+      "auto": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "n_rows": 2
+      },
+      "auto_rerank": {
+        "precision_at_k": 0.1,
+        "recall_at_k": 0.25,
+        "mrr": 0.25,
+        "n_rows": 2
+      },
+      "hybrid_rerank": {
+        "precision_at_k": 0.1,
+        "recall_at_k": 0.25,
+        "mrr": 0.25,
+        "n_rows": 2
+      }
+    },
+    "exact_issue_lookup": {
+      "vector": {
+        "precision_at_k": 0.275,
+        "recall_at_k": 0.8333333333333333,
+        "mrr": 0.8125,
+        "n_rows": 8
+      },
+      "hybrid": {
+        "precision_at_k": 0.275,
+        "recall_at_k": 0.8333333333333333,
+        "mrr": 0.875,
+        "n_rows": 8
+      },
+      "auto": {
+        "precision_at_k": 0.275,
+        "recall_at_k": 0.8333333333333333,
+        "mrr": 0.8125,
+        "n_rows": 8
+      },
+      "auto_rerank": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 0.7916666666666667,
+        "mrr": 0.7291666666666667,
+        "n_rows": 8
+      },
+      "hybrid_rerank": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 0.7916666666666667,
+        "mrr": 0.7291666666666667,
+        "n_rows": 8
+      }
+    },
+    "rating_scoped_summary": {
+      "vector": {
+        "precision_at_k": 0.4,
+        "recall_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "n_rows": 1
+      },
+      "hybrid": {
+        "precision_at_k": 0.4,
+        "recall_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "n_rows": 1
+      },
+      "auto": {
+        "precision_at_k": 0.4,
+        "recall_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "n_rows": 1
+      },
+      "auto_rerank": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "n_rows": 1
+      },
+      "hybrid_rerank": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "n_rows": 1
+      }
+    },
+    "value_complaint": {
+      "vector": {
+        "precision_at_k": 0.2,
+        "recall_at_k": 0.3333333333333333,
+        "mrr": 0.2,
+        "n_rows": 1
+      },
+      "hybrid": {
+        "precision_at_k": 0.4,
+        "recall_at_k": 0.6666666666666666,
+        "mrr": 0.25,
+        "n_rows": 1
+      },
+      "auto": {
+        "precision_at_k": 0.2,
+        "recall_at_k": 0.3333333333333333,
+        "mrr": 0.2,
+        "n_rows": 1
+      },
+      "auto_rerank": {
+        "precision_at_k": 0.4,
+        "recall_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "n_rows": 1
+      },
+      "hybrid_rerank": {
+        "precision_at_k": 0.6,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "n_rows": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+Selective rerank vs baselines (trace-derived aggregates)
+
+Deltas are (auto_selective_rerank − baseline). Percent change is relative to the baseline metric.
+
+1) auto_selective_rerank vs auto_rerank (always-on rerank)
+==========================================================
+
+Rows (base): n=12   Rows (selective): n=12
+
+| Metric | auto_rerank | auto_selective_rerank | Δ abs (sel−base) | Δ % (rel. to base) |
+|--------|------|--------|------------------|---------------------|
+| P@k | 0.2333 | 0.2667 | +0.0333 | +14.3% |
+| R@k | 0.6528 | 0.7083 | +0.0556 | +8.5% |
+| MRR | 0.6667 | 0.7500 | +0.0833 | +12.5% |
+
+Interpretation: positive Δ means selective mode scored higher than the baseline on that metric.
+
+2) auto_selective_rerank vs auto (strategy, no rerank)
+======================================================
+
+Rows (base): n=12   Rows (selective): n=12
+
+| Metric | auto | auto_selective_rerank | Δ abs (sel−base) | Δ % (rel. to base) |
+|--------|------|--------|------------------|---------------------|
+| P@k | 0.2333 | 0.2667 | +0.0333 | +14.3% |
+| R@k | 0.6389 | 0.7083 | +0.0694 | +10.9% |
+| MRR | 0.6417 | 0.7500 | +0.1083 | +16.9% |
+
+Interpretation: positive Δ means selective mode scored higher than the baseline on that metric.

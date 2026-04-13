@@ -1,0 +1,21 @@
+Answer eval score summary
+==================================================
+Labeled file: /Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/eval/answer_eval_labeled.json
+Total items: 12
+Fully scored: 12
+Pending (null scores): 0
+
+Means by query_family (1=poor, 3=good)
+--------------------------------------------------
+  [abstract_complaint_summary] n=4  grounded=3.00  correct=2.25  complete=2.50
+  [exact_issue_lookup] n=3  grounded=2.67  correct=2.33  complete=2.33
+  [rating_scoped_summary] n=3  grounded=3.00  correct=3.00  complete=3.00
+  [value_complaint] n=2  grounded=3.00  correct=2.50  complete=2.50
+
+Canonical failure_bucket ids (use null when no primary failure):
+  hallucination, ignored_filter, incomplete_summary, insufficient_evidence_handled_poorly, overfocused_on_single_chunk, weak_synthesis, wrong_scope
+
+failure_bucket counts (labeled rows only)
+  hallucination: 1
+  weak_synthesis: 2
+  wrong_scope: 3

@@ -1,0 +1,11 @@
+auto_selective_rerank — breakdown by query_family
+============================================================
+
+| query_family | count | rerank_applied | rerank_skipped | helped | unchanged | hurt | unknown |
+|--------------|-------|----------------|----------------|--------|-----------|------|---------|
+| abstract_complaint_summary | 2 | 2 | 0 | 1 | 1 | 0 | 0 |
+| exact_issue_lookup | 8 | 0 | 8 | 0 | 8 | 0 | 0 |
+| rating_scoped_summary | 1 | 0 | 1 | 0 | 1 | 0 | 0 |
+| value_complaint | 1 | 1 | 0 | 0 | 1 | 0 | 0 |
+
+Policy intent check: expect rerank mostly on value_complaint / abstract_complaint_summary; mostly skipped on rating_scoped_summary / exact_issue_lookup.

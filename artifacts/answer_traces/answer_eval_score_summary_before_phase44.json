@@ -1,0 +1,46 @@
+{
+  "labeled_count": 12,
+  "pending_ids": [],
+  "by_query_family": {
+    "abstract_complaint_summary": {
+      "n": 4,
+      "mean_grounded": 2.75,
+      "mean_correct": 2.25,
+      "mean_complete": 2.25
+    },
+    "exact_issue_lookup": {
+      "n": 3,
+      "mean_grounded": 2.333,
+      "mean_correct": 2.333,
+      "mean_complete": 2.333
+    },
+    "rating_scoped_summary": {
+      "n": 3,
+      "mean_grounded": 3.0,
+      "mean_correct": 2.667,
+      "mean_complete": 3.0
+    },
+    "value_complaint": {
+      "n": 2,
+      "mean_grounded": 3.0,
+      "mean_correct": 2.5,
+      "mean_complete": 2.5
+    }
+  },
+  "allowed_failure_buckets": [
+    "hallucination",
+    "ignored_filter",
+    "incomplete_summary",
+    "insufficient_evidence_handled_poorly",
+    "overfocused_on_single_chunk",
+    "weak_synthesis",
+    "wrong_scope"
+  ],
+  "failure_bucket_counts": {
+    "weak_synthesis": 3,
+    "ignored_filter": 1,
+    "hallucination": 1,
+    "wrong_scope": 2
+  },
+  "unknown_failure_bucket_counts": {}
+}

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "q01",
+    "query_family": "exact_issue_lookup",
+    "query": "counterfeit or fake product complaints",
+    "good_retrieval_note": "Chunks should mention counterfeit, fake, not authentic, or wrong product vs store-bought.",
+    "relevant_lexical_hints": ["counterfeit", "fake", "real", "authentic", "costco", "amazon"]
+  },
+  {
+    "id": "q02",
+    "query_family": "exact_issue_lookup",
+    "query": "defective or damaged items",
+    "good_retrieval_note": "Surface defects, broken packaging, wrong formulation, clumps, leaks—not generic praise.",
+    "relevant_lexical_hints": ["defective", "damaged", "broken", "clump", "messy"]
+  },
+  {
+    "id": "q03",
+    "query_family": "exact_issue_lookup",
+    "query": "skin irritation rash or burn from product",
+    "good_retrieval_note": "Safety reactions: rash, burn, irritation, allergic reaction.",
+    "relevant_lexical_hints": ["rash", "burn", "irritation", "skin", "allergy"]
+  },
+  {
+    "id": "q04",
+    "query_family": "exact_issue_lookup",
+    "query": "product smells bad or chemical smell",
+    "good_retrieval_note": "Odor complaints, chemical scent, gone bad.",
+    "relevant_lexical_hints": ["smell", "odor", "scent", "chemical", "stink"]
+  },
+  {
+    "id": "q05",
+    "query_family": "exact_issue_lookup",
+    "query": "not the same as store version quality difference",
+    "good_retrieval_note": "Comparison to retail (e.g. Costco) or formula/texture differences.",
+    "relevant_lexical_hints": ["costco", "store", "same", "different", "version"]
+  },
+  {
+    "id": "q06",
+    "query_family": "exact_issue_lookup",
+    "query": "shipping packaging arrived open or crushed",
+    "good_retrieval_note": "Fulfillment damage, open box, crushed—not unrelated 5-star scent praise.",
+    "relevant_lexical_hints": ["shipping", "package", "box", "open", "crushed", "amazon"]
+  },
+  {
+    "id": "q07",
+    "query_family": "exact_issue_lookup",
+    "query": "expired or old stock product",
+    "good_retrieval_note": "Expiry, old batch, dried out, shelf life.",
+    "relevant_lexical_hints": ["expired", "old", "dry", "date", "batch"]
+  },
+  {
+    "id": "q08",
+    "query_family": "abstract_complaint_summary",
+    "query": "does not work ineffective deodorant",
+    "good_retrieval_note": "Efficacy failure, doesn't last, doesn't work—not only positive family recommendations.",
+    "relevant_lexical_hints": ["work", "doesn't", "ineffective", "sweat", "odor"]
+  },
+  {
+    "id": "q09",
+    "query_family": "value_complaint",
+    "query": "price too high for what you get",
+    "good_retrieval_note": "Value complaints; may be sparse in review text—vector-only may drift to generic reviews.",
+    "relevant_lexical_hints": ["price", "expensive", "worth", "money", "cost"]
+  },
+  {
+    "id": "q10",
+    "query_family": "exact_issue_lookup",
+    "query": "charcoal chunks or texture problems in stick",
+    "good_retrieval_note": "Specific texture defects mentioned in dataset (chunks, gritty, tears skin).",
+    "relevant_lexical_hints": ["charcoal", "chunk", "texture", "stick", "smooth"]
+  },
+  {
+    "id": "q11",
+    "query_family": "exact_issue_lookup",
+    "query": "baking soda free deodorant that works",
+    "good_retrieval_note": "Ingredient constraint + experience; hybrid helps lock ingredient tokens.",
+    "relevant_lexical_hints": ["baking", "soda", "allergy", "free", "deodorant"]
+  },
+  {
+    "id": "q12",
+    "query_family": "abstract_complaint_summary",
+    "query": "horrible customer experience with this purchase",
+    "good_retrieval_note": "Negative purchase narrative; avoid pure 5-star generic satisfaction unless it matches.",
+    "relevant_lexical_hints": ["horrible", "worst", "never", "disappointed", "waste"]
+  },
+  {
+    "id": "q13",
+    "query_family": "exact_issue_lookup",
+    "query": "tear armpits or painful application",
+    "good_retrieval_note": "Physical discomfort from application—exact words may appear in complaints.",
+    "relevant_lexical_hints": ["tear", "pain", "armpit", "hurt", "rough"]
+  },
+  {
+    "id": "q14",
+    "query_family": "exact_issue_lookup",
+    "query": "duplicate duplicate order wrong item sent",
+    "good_retrieval_note": "Wrong item, duplicate shipment—if absent in corpus, good retrieval should say little evidence.",
+    "relevant_lexical_hints": ["wrong", "duplicate", "sent", "item", "order"]
+  },
+  {
+    "id": "q15",
+    "query_family": "rating_scoped_summary",
+    "query": "summary of negative one-star experiences",
+    "good_retrieval_note": "Low-star narratives; parser may add rating filter when phrased as 1-star only—here 'negative' is broad.",
+    "relevant_lexical_hints": ["star", "waste", "return", "refund", "disappointed"]
+  }
+]

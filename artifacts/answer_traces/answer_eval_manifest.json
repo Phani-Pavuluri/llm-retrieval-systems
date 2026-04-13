@@ -1,0 +1,12 @@
+{
+  "ts": "2026-04-13T22:28:54.908111+00:00",
+  "eval_file": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/eval/answer_eval_labeled.json",
+  "out_jsonl": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+  "k": 5,
+  "llm_backend": "ollama",
+  "llm_model": null,
+  "rerank_model_effective": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "rerank_top_n": null,
+  "selective_rerank": true,
+  "note": "use_rerank is NOT forced from CLI so selective rerank policy can turn rerank on/off per query."
+}

@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "description": "Manual Phase-4 answer quality labels. Run scripts/run_answer_eval.py, then fill scores (1=poor, 2=mixed, 3=good). If any score is <3 or the answer misfired, set failure_bucket to one canonical value (see failure_buckets); use null when there is no single primary failure.",
+  "rubric": {
+    "grounded": "1 = unsupported or hallucinated claims; 3 = claims tightly tied to retrieved excerpts.",
+    "correct": "1 = wrong relative to evidence; 3 = accurate.",
+    "complete": "1 = misses the question; 3 = fully addresses it given evidence."
+  },
+  "failure_buckets": [
+    "hallucination",
+    "incomplete_summary",
+    "wrong_scope",
+    "ignored_filter",
+    "weak_synthesis",
+    "overfocused_on_single_chunk",
+    "insufficient_evidence_handled_poorly"
+  ],
+  "failure_bucket_hints": {
+    "hallucination": "Unsupported or invented facts vs retrieved excerpts.",
+    "incomplete_summary": "Summary misses major themes or stops too early.",
+    "wrong_scope": "Answer shape or focus does not match the question (e.g. too narrow/broad).",
+    "ignored_filter": "Rating/brand/metadata scope from the query or filters not respected.",
+    "weak_synthesis": "Evidence present but answer stays shallow or list-like without synthesis.",
+    "overfocused_on_single_chunk": "Ignores other relevant chunks; one chunk dominates unfairly.",
+    "insufficient_evidence_handled_poorly": "Retrieval was thin but the model guessed or hedged badly instead of stating lack of evidence."
+  },
+  "items": [
+    {
+      "id": "ae001",
+      "query": "What are common complaints about this product?",
+      "query_family": "abstract_complaint_summary",
+      "scores": { "grounded": 3, "correct": 2, "complete": 2 },
+      "failure_bucket": "wrong_scope",
+      "notes": "Phase44 rerun: thematic bullets and multi-chunk use improved, but first theme leads with non-complaints (no irritation) under a complaint question—positive leakage in structure."
+    },
+    {
+      "id": "ae002",
+      "query": "Summarize negative one-star experiences mentioned in the reviews.",
+      "query_family": "rating_scoped_summary",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase44 rerun: filters now review_rating==1; answer themes and chunks align with literal one-star scope (parser+prompt fix)."
+    },
+    {
+      "id": "ae003",
+      "query": "What value-related complaints show up? Is it worth the price?",
+      "query_family": "value_complaint",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase44 rerun: structured value themes; hedged worth-the-price appropriately from excerpts."
+    },
+    {
+      "id": "ae004",
+      "query": "Do reviewers report counterfeit or fake items?",
+      "query_family": "exact_issue_lookup",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase44 rerun: tight yes with chunk cites."
+    },
+    {
+      "id": "ae005",
+      "query": "What defects or damage problems appear most often?",
+      "query_family": "abstract_complaint_summary",
+      "scores": { "grounded": 3, "correct": 2, "complete": 2 },
+      "failure_bucket": "weak_synthesis",
+      "notes": "Phase44 rerun: cites defects with chunks but still does not address frequency / most-often (routing still issue_keywords / exact_issue template)."
+    },
+    {
+      "id": "ae006",
+      "query": "List specific symptoms like rash or skin irritation if mentioned.",
+      "query_family": "exact_issue_lookup",
+      "scores": { "grounded": 2, "correct": 2, "complete": 2 },
+      "failure_bucket": "hallucination",
+      "notes": "Phase44 rerun: shorter list but still bundles Chunk3 rashes with reviewers who used this product—risk of same misattribution vs excerpt that disclaims this product."
+    },
+    {
+      "id": "ae007",
+      "query": "What do three-star reviews say about overall satisfaction?",
+      "query_family": "rating_scoped_summary",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase44 rerun: correctly states no 3-star in pool; cites chunk tones."
+    },
+    {
+      "id": "ae008",
+      "query": "Overall themes in negative experiences with this product.",
+      "query_family": "abstract_complaint_summary",
+      "scores": { "grounded": 3, "correct": 2, "complete": 3 },
+      "failure_bucket": "weak_synthesis",
+      "notes": "Phase44 rerun: better structure and filter note, but Odor section mixes negative smell with neutral/positive scent phrasing—theme purity still imperfect."
+    },
+    {
+      "id": "ae009",
+      "query": "Is the product considered good value for money in the reviews?",
+      "query_family": "value_complaint",
+      "scores": { "grounded": 3, "correct": 2, "complete": 2 },
+      "failure_bucket": "wrong_scope",
+      "notes": "Phase44 rerun: still routed to general_qa not value_complaint; answer hedges with counterfeit vs value—pipeline routing unchanged."
+    },
+    {
+      "id": "ae010",
+      "query": "Any mentions of texture, smell, or consistency issues?",
+      "query_family": "exact_issue_lookup",
+      "scores": { "grounded": 3, "correct": 2, "complete": 2 },
+      "failure_bucket": "wrong_scope",
+      "notes": "Phase44 rerun: clearer issue vs non-issue layout, but still highlights positive smell under an issues question."
+    },
+    {
+      "id": "ae011",
+      "query": "What do reviewers say about low-rated experiences in general?",
+      "query_family": "rating_scoped_summary",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase44 rerun: strong themed bullets with chunk support under low-rating filter."
+    },
+    {
+      "id": "ae012",
+      "query": "Briefly: what problems should a buyer watch out for?",
+      "query_family": "abstract_complaint_summary",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase44 rerun: still value_complaint template but synthesis now matches buyer-risk ask; concrete problems with cites."
+    }
+  ]
+}

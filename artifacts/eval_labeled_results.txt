@@ -1,0 +1,86 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 7935.15it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+
+Loading weights:   0%|          | 0/105 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 105/105 [00:00<00:00, 14841.84it/s]
+[1mBertForSequenceClassification LOAD REPORT[0m from: cross-encoder/ms-marco-MiniLM-L-6-v2
+Key                          | Status     |  | 
+-----------------------------+------------+--+-
+bert.embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Labeled file: /Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/eval/retrieval_labeled_eval.json
+Traces: /Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/retrieval_traces/labeled_eval_run.jsonl
+P@5 / R@5 / MRR (queries without gold: P/R omitted from means)
+
+OVERALL vector: P@5=0.233 R@5=0.639 MRR=0.642
+  pool [vector]: n=12 avg_candidate_pool=25.0 avg_post_filter=21.5 pct_underfilled=8.3%
+OVERALL hybrid: P@5=0.267 R@5=0.708 MRR=0.771
+  pool [hybrid]: n=12 avg_candidate_pool=25.0 avg_post_filter=21.5 pct_underfilled=8.3%
+OVERALL auto: P@5=0.233 R@5=0.639 MRR=0.642
+  pool [auto]: n=12 avg_candidate_pool=30.6 avg_post_filter=25.2 pct_underfilled=8.3%
+OVERALL auto_rerank: P@5=0.217 R@5=0.625 MRR=0.611
+  pool [auto_rerank]: n=12 avg_candidate_pool=42.0 avg_post_filter=36.0 pct_underfilled=8.3%
+OVERALL hybrid_rerank: P@5=0.233 R@5=0.653 MRR=0.611
+  pool [hybrid_rerank]: n=12 avg_candidate_pool=42.0 avg_post_filter=36.0 pct_underfilled=8.3%
+
+BY query_family:
+  [abstract_complaint_summary]
+    vector: P@5=0.000 R@5=0.000 MRR=0.000
+        pool: n=2 avg_candidate_pool=25.0 avg_post_filter=25.0 pct_underfilled=0.0%
+    hybrid: P@5=0.100 R@5=0.250 MRR=0.500
+        pool: n=2 avg_candidate_pool=25.0 avg_post_filter=25.0 pct_underfilled=0.0%
+    auto: P@5=0.000 R@5=0.000 MRR=0.000
+        pool: n=2 avg_candidate_pool=25.0 avg_post_filter=25.0 pct_underfilled=0.0%
+    auto_rerank: P@5=0.100 R@5=0.250 MRR=0.250
+        pool: n=2 avg_candidate_pool=42.0 avg_post_filter=42.0 pct_underfilled=0.0%
+    hybrid_rerank: P@5=0.100 R@5=0.250 MRR=0.250
+        pool: n=2 avg_candidate_pool=42.0 avg_post_filter=42.0 pct_underfilled=0.0%
+  [exact_issue_lookup]
+    vector: P@5=0.275 R@5=0.833 MRR=0.812
+        pool: n=8 avg_candidate_pool=25.0 avg_post_filter=21.9 pct_underfilled=12.5%
+    hybrid: P@5=0.275 R@5=0.833 MRR=0.875
+        pool: n=8 avg_candidate_pool=25.0 avg_post_filter=21.9 pct_underfilled=12.5%
+    auto: P@5=0.275 R@5=0.833 MRR=0.812
+        pool: n=8 avg_candidate_pool=32.1 avg_post_filter=27.4 pct_underfilled=12.5%
+    auto_rerank: P@5=0.250 R@5=0.792 MRR=0.729
+        pool: n=8 avg_candidate_pool=42.0 avg_post_filter=36.8 pct_underfilled=12.5%
+    hybrid_rerank: P@5=0.250 R@5=0.792 MRR=0.729
+        pool: n=8 avg_candidate_pool=42.0 avg_post_filter=36.8 pct_underfilled=12.5%
+  [rating_scoped_summary]
+    vector: P@5=0.400 R@5=0.667 MRR=1.000
+        pool: n=1 avg_candidate_pool=25.0 avg_post_filter=8.0 pct_underfilled=0.0%
+    hybrid: P@5=0.400 R@5=0.667 MRR=1.000
+        pool: n=1 avg_candidate_pool=25.0 avg_post_filter=8.0 pct_underfilled=0.0%
+    auto: P@5=0.400 R@5=0.667 MRR=1.000
+        pool: n=1 avg_candidate_pool=35.0 avg_post_filter=9.0 pct_underfilled=0.0%
+    auto_rerank: P@5=0.000 R@5=0.000 MRR=0.000
+        pool: n=1 avg_candidate_pool=42.0 avg_post_filter=12.0 pct_underfilled=0.0%
+    hybrid_rerank: P@5=0.000 R@5=0.000 MRR=0.000
+        pool: n=1 avg_candidate_pool=42.0 avg_post_filter=12.0 pct_underfilled=0.0%
+  [value_complaint]
+    vector: P@5=0.200 R@5=0.333 MRR=0.200
+        pool: n=1 avg_candidate_pool=25.0 avg_post_filter=25.0 pct_underfilled=0.0%
+    hybrid: P@5=0.400 R@5=0.667 MRR=0.250
+        pool: n=1 avg_candidate_pool=25.0 avg_post_filter=25.0 pct_underfilled=0.0%
+    auto: P@5=0.200 R@5=0.333 MRR=0.200
+        pool: n=1 avg_candidate_pool=25.0 avg_post_filter=25.0 pct_underfilled=0.0%
+    auto_rerank: P@5=0.400 R@5=0.667 MRR=1.000
+        pool: n=1 avg_candidate_pool=42.0 avg_post_filter=42.0 pct_underfilled=0.0%
+    hybrid_rerank: P@5=0.600 R@5=1.000 MRR=1.000
+        pool: n=1 avg_candidate_pool=42.0 avg_post_filter=42.0 pct_underfilled=0.0%
+
+--- Failure typing (use trace JSONL gold_* fields) ---
+  recall:     gold_in_candidate_pool == false
+  filtering:  gold_in_candidate_pool true, gold_in_post_filter_pool false
+  ranking:    gold_in_post_filter_pool true, gold_in_top_k_results false

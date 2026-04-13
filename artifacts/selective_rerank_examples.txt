@@ -1,0 +1,45 @@
+Selective rerank — representative examples (from traces)
+============================================================
+
+Skipped examples prefer queries where always-on auto_rerank *hurt* gold-in-top-k (same eval_id), illustrating avoided degradation.
+
+A) Up to 2 queries where selective rerank helped (gold False→True)
+------------------------------------------------------------------
+  Example 1  eval_id='l07'
+    query: does not work ineffective deodorant
+    query_family: abstract_complaint_summary
+    rerank_applied: True  reason_hint: rerank_applied  trace rerank_reason: 'selective:family_on:abstract_complaint_summary'
+    pre top-5:  ['B07WDL82Z4_12_0', 'B071YYMZ19_8_0', 'B07WDL82Z4_20_0', 'B071YYMZ19_0_0', 'B07WDL82Z4_17_0']
+    post top-5: ['B071YYMZ19_7_0', 'B071YYMZ19_3_0', 'B071YYMZ19_0_0', 'B07WDL82Z4_17_0', 'B071YYMZ19_1_0']
+    gold_in_pre_rerank_top_k: False  gold_in_post_rerank_top_k: True
+    gold movement (selective): helped
+    note: Order changed within top-k (e.g. 'B071YYMZ19_0_0' moved relative to retrieval ranking).
+    explanation: Gold was outside top-k before rerank and inside after selective rerank.
+
+B) Up to 2 queries where rerank was skipped (policy / confidence)
+-----------------------------------------------------------------
+  Example 1  eval_id='l12'
+    query: summary of negative one-star experiences
+    query_family: rating_scoped_summary
+    rerank_applied: False  reason_hint: metadata  trace rerank_reason: 'selective:metadata_rating_filter'
+    pre top-5:  ['B071YYMZ19_4_0', 'B07NQN58ZC_29_0', 'B07NQN58ZC_33_0', 'B07WDL82Z4_21_0', 'B071YYMZ19_7_0']
+    post top-5: ['B071YYMZ19_4_0', 'B07NQN58ZC_29_0', 'B07NQN58ZC_33_0', 'B07WDL82Z4_21_0', 'B071YYMZ19_7_0']
+    gold_in_pre_rerank_top_k: True  gold_in_post_rerank_top_k: True
+    gold movement (selective): unchanged
+    note: Top-k chunk IDs and order unchanged after rerank.
+    explanation: Rerank skipped by policy/confidence; same query under always-on auto_rerank hurt gold-in-top-k — likely avoided degradation.
+
+  Example 2  eval_id='l09'
+    query: baking soda free deodorant that works
+    query_family: exact_issue_lookup
+    rerank_applied: False  reason_hint: query_family  trace rerank_reason: 'selective:family_off:exact_issue_lookup'
+    pre top-5:  ['B07WDL82Z4_20_0', 'B07WDL82Z4_17_0', 'B071YYMZ19_1_0', 'B07WDL82Z4_12_0', 'B071YYMZ19_8_0']
+    post top-5: ['B07WDL82Z4_20_0', 'B07WDL82Z4_17_0', 'B071YYMZ19_1_0', 'B07WDL82Z4_12_0', 'B071YYMZ19_8_0']
+    gold_in_pre_rerank_top_k: True  gold_in_post_rerank_top_k: True
+    gold movement (selective): unchanged
+    note: Top-k chunk IDs and order unchanged after rerank.
+    explanation: Rerank skipped; compare to auto_rerank trace for same eval_id if needed.
+
+C) Up to 1 query where selective rerank still hurt (gold True→False), if any
+----------------------------------------------------------------------------
+  (none in this trace)

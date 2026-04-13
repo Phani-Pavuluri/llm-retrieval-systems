@@ -22,10 +22,14 @@ class TestGetLLM(unittest.TestCase):
                 get_llm("openai")
         self.assertIn("OPENAI_API_KEY", str(ctx.exception))
 
-    @patch("src.llm.OpenAI")
-    def test_openai_initializes_with_key(self, mock_openai: MagicMock) -> None:
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}, clear=False):
-            llm = get_llm("openai", model_name="gpt-4o-mini")
+    def test_openai_initializes_with_key(self) -> None:
+        try:
+            import openai  # noqa: F401
+        except ImportError:
+            self.skipTest("openai package not installed")
+        with patch("openai.OpenAI") as mock_openai:
+            with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}, clear=False):
+                llm = get_llm("openai", model_name="gpt-4o-mini")
         self.assertIsInstance(llm, OpenAILLM)
         mock_openai.assert_called_once()
 

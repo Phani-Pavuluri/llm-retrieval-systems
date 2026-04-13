@@ -1,0 +1,27 @@
+Gold in top-k: pre vs post rerank (labeled gold only)
+============================================================
+
+Uses trace flags gold_in_pre_rerank_top_k and gold_in_post_rerank_top_k.
+
+## Always-on rerank (auto_rerank)
+Rows with gold: 12
+  helped   (pre=False, post=True):  1
+  unchanged:                        10
+  hurt     (pre=True, post=False):  1
+  unknown (missing flags):          0
+
+## Selective rerank (auto_selective_rerank)
+Rows with gold: 12
+  helped   (pre=False, post=True):  1
+  unchanged:                        11
+  hurt     (pre=True, post=False):  0
+  unknown (missing flags):          0
+
+## Side-by-side summary
+
+| Category | auto_rerank | auto_selective_rerank |
+|----------|-------------|------------------------|
+| helped (False→True) | 1 | 1 |
+| unchanged | 10 | 11 |
+| hurt (True→False) | 1 | 0 |
+| unknown / missing flags | 0 | 0 |

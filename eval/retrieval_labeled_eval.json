@@ -1,0 +1,86 @@
+[
+  {
+    "id": "l01",
+    "query_family": "exact_issue_lookup",
+    "query": "counterfeit or fake product complaints",
+    "good_retrieval_note": "Relevant: Amazon/Costco authenticity, defective/counterfeit wording.",
+    "gold_chunk_ids": ["B071YYMZ19_2_0", "B071YYMZ19_4_0"]
+  },
+  {
+    "id": "l02",
+    "query_family": "exact_issue_lookup",
+    "query": "defective or damaged items",
+    "good_retrieval_note": "Relevant: defective/counterfeit, clumps, messy stick.",
+    "gold_chunk_ids": ["B071YYMZ19_2_0"]
+  },
+  {
+    "id": "l03",
+    "query_family": "exact_issue_lookup",
+    "query": "skin irritation rash or burn from product",
+    "good_retrieval_note": "Relevant: rash, burning, dermatologist, sensitive skin reactions.",
+    "gold_chunk_ids": ["B071YYMZ19_3_0", "B071YYMZ19_7_0"]
+  },
+  {
+    "id": "l04",
+    "query_family": "exact_issue_lookup",
+    "query": "product smells bad or chemical smell",
+    "good_retrieval_note": "Relevant: strong scent, smell complaints, threw away.",
+    "gold_chunk_ids": ["B07WDL82Z4_14_0", "B07WDL82Z4_15_0", "B07WDL82Z4_21_0"]
+  },
+  {
+    "id": "l05",
+    "query_family": "exact_issue_lookup",
+    "query": "not the same as store version quality difference",
+    "good_retrieval_note": "Relevant: Costco vs Amazon, smooth vs clumps.",
+    "gold_chunk_ids": ["B071YYMZ19_2_0"]
+  },
+  {
+    "id": "l06",
+    "query_family": "exact_issue_lookup",
+    "query": "charcoal chunks or texture problems in stick",
+    "good_retrieval_note": "Relevant: charcoal chunks, tear armpits, clumps.",
+    "gold_chunk_ids": ["B071YYMZ19_2_0", "B071YYMZ19_4_0"]
+  },
+  {
+    "id": "l07",
+    "query_family": "abstract_complaint_summary",
+    "query": "does not work ineffective deodorant",
+    "good_retrieval_note": "Relevant: failed, not effective, summer exercise limitations; not only 5-star praise.",
+    "gold_chunk_ids": ["B071YYMZ19_3_0", "B07WDL82Z4_18_0"]
+  },
+  {
+    "id": "l08",
+    "query_family": "value_complaint",
+    "query": "price too high for what you get",
+    "good_retrieval_note": "Relevant: price, expensive, worth it (sparse in corpus).",
+    "gold_chunk_ids": ["B071YYMZ19_1_0", "B07V3978XD_11_0", "B07NQN58ZC_33_0"]
+  },
+  {
+    "id": "l09",
+    "query_family": "exact_issue_lookup",
+    "query": "baking soda free deodorant that works",
+    "good_retrieval_note": "Relevant: baking soda allergy, family quest for working natural deodorant.",
+    "gold_chunk_ids": ["B07WDL82Z4_20_0"]
+  },
+  {
+    "id": "l10",
+    "query_family": "abstract_complaint_summary",
+    "query": "horrible customer experience with this purchase",
+    "good_retrieval_note": "Relevant: horrible, threw away, worst—negative narrative.",
+    "gold_chunk_ids": ["B07WDL82Z4_14_0", "B07WDL82Z4_21_0"]
+  },
+  {
+    "id": "l11",
+    "query_family": "exact_issue_lookup",
+    "query": "tear armpits or painful application",
+    "good_retrieval_note": "Relevant: tear armpits, charcoal chunks, pain/burn.",
+    "gold_chunk_ids": ["B071YYMZ19_4_0", "B071YYMZ19_7_0"]
+  },
+  {
+    "id": "l12",
+    "query_family": "rating_scoped_summary",
+    "query": "summary of negative one-star experiences",
+    "good_retrieval_note": "Relevant: 1-star style complaints; parser may add rating filter.",
+    "gold_chunk_ids": ["B071YYMZ19_2_0", "B071YYMZ19_4_0", "B07WDL82Z4_21_0"]
+  }
+]

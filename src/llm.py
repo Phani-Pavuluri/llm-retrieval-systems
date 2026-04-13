@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import os
 from abc import ABC, abstractmethod
+from src import config
 
 import requests
-from openai import OpenAI
 
 OLLAMA_DEFAULT_BASE = "http://localhost:11434"
 OLLAMA_GENERATE_PATH = "/api/generate"
@@ -21,6 +21,8 @@ class OpenAILLM(BaseLLM):
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY is not set.")
+        from openai import OpenAI
+
         self.client = OpenAI(api_key=api_key)
         self.model_name = model_name
 
@@ -81,7 +83,6 @@ class OllamaLLM(BaseLLM):
 
 
 def get_llm(backend: str, model_name: str | None = None) -> BaseLLM:
-    from src import config
 
     name = (backend or "").strip().lower()
     if name == "openai":

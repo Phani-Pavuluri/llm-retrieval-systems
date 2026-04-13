@@ -1,0 +1,73 @@
+test_mode_stats_empty_mode (test_analyze_rerank_impact.TestModeStats.test_mode_stats_empty_mode) ... ok
+test_helped (test_analyze_rerank_impact.TestRerankGoldMovement.test_helped) ... ok
+test_hurt (test_analyze_rerank_impact.TestRerankGoldMovement.test_hurt) ... ok
+test_non_rerank_mode_none (test_analyze_rerank_impact.TestRerankGoldMovement.test_non_rerank_mode_none) ... ok
+test_both_false (test_analyze_rerank_impact.TestRerankPrePostCategory.test_both_false) ... ok
+test_fixed (test_analyze_rerank_impact.TestRerankPrePostCategory.test_fixed) ... ok
+test_apply_hybrid_scoring_order (test_hybrid_scoring.TestHybridScoring.test_apply_hybrid_scoring_order) ... ok
+test_constant_semantic_column (test_hybrid_scoring.TestHybridScoring.test_constant_semantic_column) ... ok
+test_keyword_overlap (test_hybrid_scoring.TestHybridScoring.test_keyword_overlap) ... ok
+test_tokenize (test_hybrid_scoring.TestHybridScoring.test_tokenize) ... ok
+test_ollama_non_200_raises_clear_message (test_llm_factory.TestGetLLM.test_ollama_non_200_raises_clear_message) ... ok
+test_ollama_returns_response_field (test_llm_factory.TestGetLLM.test_ollama_returns_response_field) ... ok
+test_ollama_unreachable_raises_connection_error (test_llm_factory.TestGetLLM.test_ollama_unreachable_raises_connection_error) ... ok
+test_openai_initializes_with_key (test_llm_factory.TestGetLLM.test_openai_initializes_with_key) ... ok
+test_openai_missing_api_key_raises_clear_message (test_llm_factory.TestGetLLM.test_openai_missing_api_key_raises_clear_message) ... ok
+test_unsupported_backend_raises (test_llm_factory.TestGetLLM.test_unsupported_backend_raises) ... ok
+test_brand_from_phrase (test_query_parser.TestQueryParser.test_brand_from_phrase) ... ok
+test_complaint_task (test_query_parser.TestQueryParser.test_complaint_task) ... ok
+test_general_qa_default (test_query_parser.TestQueryParser.test_general_qa_default) ... ok
+test_low_rated_filter (test_query_parser.TestQueryParser.test_low_rated_filter) ... ok
+test_one_star_filter (test_query_parser.TestQueryParser.test_one_star_filter) ... ok
+test_apply_rerank_preserves_metadata_columns (test_reranker.TestCrossEncoderReranker.test_apply_rerank_preserves_metadata_columns) ... ok
+test_rerank_reorders_by_mock_scores (test_reranker.TestCrossEncoderReranker.test_rerank_reorders_by_mock_scores) ... ok
+test_explicit_false_overrides_config (test_reranker.TestEffectiveRerank.test_explicit_false_overrides_config) ... ok
+test_mocked_rerank_improves_ordering (test_reranker.TestPipelineRerank.test_mocked_rerank_improves_ordering) ... ok
+test_trace_record_includes_rerank_when_applied (test_reranker.TestPipelineRerank.test_trace_record_includes_rerank_when_applied) ... ok
+test_use_rerank_false_skips_second_stage (test_reranker.TestPipelineRerank.test_use_rerank_false_skips_second_stage) ... ok
+test_aggregate_mean (test_retrieval_metrics.TestRetrievalMetrics.test_aggregate_mean) ... ok
+test_mrr (test_retrieval_metrics.TestRetrievalMetrics.test_mrr) ... ok
+test_precision_at_k (test_retrieval_metrics.TestRetrievalMetrics.test_precision_at_k) ... ok
+test_recall_at_k (test_retrieval_metrics.TestRetrievalMetrics.test_recall_at_k) ... ok
+test_apply_mutates_request (test_retrieval_strategy.TestRetrievalStrategy.test_apply_mutates_request) ... ok
+test_complaint_task_light_hybrid (test_retrieval_strategy.TestRetrievalStrategy.test_complaint_task_light_hybrid) ... ok
+test_default_general_vector (test_retrieval_strategy.TestRetrievalStrategy.test_default_general_vector) ... ok
+test_issue_keywords_hybrid_strong (test_retrieval_strategy.TestRetrievalStrategy.test_issue_keywords_hybrid_strong) ... ok
+test_pool_multiplier_rating_filter (test_retrieval_strategy.TestRetrievalStrategy.test_pool_multiplier_rating_filter) ... ok
+test_summary_phrase_vector (test_retrieval_strategy.TestRetrievalStrategy.test_summary_phrase_vector) ... ok
+test_equality_string (test_retriever_filters.TestMetadataFilters.test_equality_string) ... ok
+test_range_max (test_retriever_filters.TestMetadataFilters.test_range_max) ... ok
+test_range_min_max (test_retriever_filters.TestMetadataFilters.test_range_min_max) ... ok
+test_unknown_filter_keys_ignored (test_retriever_filters.TestMetadataFilters.test_unknown_filter_keys_ignored) ... ok
+test_candidate_count_config (test_retriever_pool.TestRetrieverPool.test_candidate_count_config) ... ok
+test_candidate_count_respects_multiplier (test_retriever_pool.TestRetrieverPool.test_candidate_count_respects_multiplier) ... ok
+test_candidate_count_uses_rerank_top_n_when_rerank_on (test_retriever_pool.TestRetrieverPool.test_candidate_count_uses_rerank_top_n_when_rerank_on) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 0.009s
+
+OK
+
+
+=== Rerank-focused (subset) ===
+
+test_apply_rerank_preserves_metadata_columns (tests.test_reranker.TestCrossEncoderReranker.test_apply_rerank_preserves_metadata_columns) ... ok
+test_rerank_reorders_by_mock_scores (tests.test_reranker.TestCrossEncoderReranker.test_rerank_reorders_by_mock_scores) ... ok
+test_explicit_false_overrides_config (tests.test_reranker.TestEffectiveRerank.test_explicit_false_overrides_config) ... ok
+test_mocked_rerank_improves_ordering (tests.test_reranker.TestPipelineRerank.test_mocked_rerank_improves_ordering) ... ok
+test_trace_record_includes_rerank_when_applied (tests.test_reranker.TestPipelineRerank.test_trace_record_includes_rerank_when_applied) ... ok
+test_use_rerank_false_skips_second_stage (tests.test_reranker.TestPipelineRerank.test_use_rerank_false_skips_second_stage) ... ok
+test_candidate_count_config (tests.test_retriever_pool.TestRetrieverPool.test_candidate_count_config) ... ok
+test_candidate_count_respects_multiplier (tests.test_retriever_pool.TestRetrieverPool.test_candidate_count_respects_multiplier) ... ok
+test_candidate_count_uses_rerank_top_n_when_rerank_on (tests.test_retriever_pool.TestRetrieverPool.test_candidate_count_uses_rerank_top_n_when_rerank_on) ... ok
+test_mode_stats_empty_mode (tests.test_analyze_rerank_impact.TestModeStats.test_mode_stats_empty_mode) ... ok
+test_helped (tests.test_analyze_rerank_impact.TestRerankGoldMovement.test_helped) ... ok
+test_hurt (tests.test_analyze_rerank_impact.TestRerankGoldMovement.test_hurt) ... ok
+test_non_rerank_mode_none (tests.test_analyze_rerank_impact.TestRerankGoldMovement.test_non_rerank_mode_none) ... ok
+test_both_false (tests.test_analyze_rerank_impact.TestRerankPrePostCategory.test_both_false) ... ok
+test_fixed (tests.test_analyze_rerank_impact.TestRerankPrePostCategory.test_fixed) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.005s
+
+OK

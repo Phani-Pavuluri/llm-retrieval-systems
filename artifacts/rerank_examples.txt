@@ -1,0 +1,44 @@
+Rerank qualitative examples (from traces)
+============================================================
+
+Where reranking helped (up to 2)
+--------------------------------
+  Example 1  eval_id='l07'  mode='auto_rerank'
+    query: does not work ineffective deodorant
+    query_family: abstract_complaint_summary
+    pre-rerank top-5 chunk_ids: ['B07WDL82Z4_12_0', 'B071YYMZ19_8_0', 'B07WDL82Z4_20_0', 'B071YYMZ19_0_0', 'B07WDL82Z4_17_0']
+    post-rerank top-5 chunk_ids: ['B071YYMZ19_7_0', 'B071YYMZ19_3_0', 'B071YYMZ19_0_0', 'B07WDL82Z4_17_0', 'B071YYMZ19_1_0']
+    gold_in_pre_rerank_top_k: False
+    gold_in_post_rerank_top_k: True
+    note: Order changed within top-k (e.g. 'B071YYMZ19_0_0' moved relative to retrieval ranking).
+
+Where reranking did not change gold status (up to 2)
+----------------------------------------------------
+  Example 1  eval_id='l03'  mode='auto_rerank'
+    query: skin irritation rash or burn from product
+    query_family: exact_issue_lookup
+    pre-rerank top-5 chunk_ids: []
+    post-rerank top-5 chunk_ids: []
+    gold_in_pre_rerank_top_k: False
+    gold_in_post_rerank_top_k: False
+    note: Top-k chunk IDs and order unchanged after rerank.
+
+  Example 2  eval_id='l01'  mode='auto_rerank'
+    query: counterfeit or fake product complaints
+    query_family: exact_issue_lookup
+    pre-rerank top-5 chunk_ids: ['B071YYMZ19_2_0', 'B071YYMZ19_4_0', 'B07WDL82Z4_12_0', 'B07WDL82Z4_18_0', 'B071YYMZ19_1_0']
+    post-rerank top-5 chunk_ids: ['B071YYMZ19_2_0', 'B07WDL82Z4_12_0', 'B071YYMZ19_1_0', 'B071YYMZ19_4_0', 'B07WDL82Z4_13_0']
+    gold_in_pre_rerank_top_k: True
+    gold_in_post_rerank_top_k: True
+    note: Order changed within top-k (e.g. 'B07WDL82Z4_12_0' moved relative to retrieval ranking).
+
+Where reranking hurt (up to 1)
+------------------------------
+  Example 1  eval_id='l12'  mode='auto_rerank'
+    query: summary of negative one-star experiences
+    query_family: rating_scoped_summary
+    pre-rerank top-5 chunk_ids: ['B071YYMZ19_4_0', 'B07NQN58ZC_29_0', 'B07NQN58ZC_33_0', 'B07WDL82Z4_21_0', 'B071YYMZ19_7_0']
+    post-rerank top-5 chunk_ids: ['B071YYMZ19_7_0', 'B071YYMZ19_3_0', 'B07NQN58ZC_29_0', 'B071YYMZ19_3_1', 'B071YYMZ19_6_0']
+    gold_in_pre_rerank_top_k: True
+    gold_in_post_rerank_top_k: False
+    note: Order changed within top-k (e.g. 'B071YYMZ19_7_0' moved relative to retrieval ranking).

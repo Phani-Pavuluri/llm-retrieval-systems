@@ -1,0 +1,304 @@
+{
+  "manifest": {
+    "ts": "2026-04-13T21:47:02.134201+00:00",
+    "eval_file": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/eval/answer_eval_labeled.json",
+    "out_jsonl": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+    "k": 5,
+    "llm_backend": "ollama",
+    "llm_model": null,
+    "rerank_model_effective": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "rerank_top_n": null,
+    "selective_rerank": true,
+    "note": "use_rerank is NOT forced from CLI so selective rerank policy can turn rerank on/off per query."
+  },
+  "runs": [
+    {
+      "answer_eval_id": "ae001",
+      "query": "What are common complaints about this product?",
+      "query_family": "abstract_complaint_summary",
+      "answer": "Based on the excerpts, there is no mention of any common complaints about this product. In fact, most reviewers express positive sentiments, with only one reviewer warning others to be cautious when purchasing from Amazon (Chunk 5). The concerns mentioned in Chunk 4 are relatively minor, specifically mentioning seeds as a dislike. Overall, the majority of reviews focus on the product's effectiveness and benefits, without expressing significant complaints.",
+      "prompt_template_id": "family_abstract_complaint_summary",
+      "prompt_template_label": "Abstract / thematic complaint summary",
+      "chunk_ids_used": [
+        "B07WDL82Z4_12_0",
+        "B07WDL82Z4_16_0",
+        "B07V3978XD_11_0",
+        "B007O0GQPC_26_0",
+        "B071YYMZ19_4_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": true,
+      "rerank_reason": "selective:family_on:abstract_complaint_summary",
+      "strategy_reason": "abstract_summary_vector",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae002",
+      "query": "Summarize negative one-star experiences mentioned in the reviews.",
+      "query_family": "rating_scoped_summary",
+      "answer": "Based on the provided excerpts, here is a summary of negative one-star experiences mentioned in the reviews:\n\n* [Chunk 1] The reviewer mentions that the deodorant they purchased from Amazon is not the real product and causes skin irritation.\n* [Chunk 3] Another reviewer had to stop using the product after two days due to an unbearable smell, which made them smell like a \"dying old man\".\n* [Chunk 5] A user experienced discomfort and pain while using the deodorant, describing their underarms as feeling burned and scraped. They also mention that it took several days for the burning ache to subside.\n\nThese experiences align with a negative one-star rating, indicating dissatisfaction with the product's performance or quality.",
+      "prompt_template_id": "family_rating_scoped_summary",
+      "prompt_template_label": "Rating-scoped summary",
+      "chunk_ids_used": [
+        "B071YYMZ19_4_0",
+        "B07NQN58ZC_33_0",
+        "B07WDL82Z4_21_0",
+        "B07NQN58ZC_29_0",
+        "B071YYMZ19_7_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:metadata_rating_filter",
+      "strategy_reason": "complaint_task_light_hybrid",
+      "filters": {
+        "review_rating": {
+          "max": 3
+        }
+      }
+    },
+    {
+      "answer_eval_id": "ae003",
+      "query": "What value-related complaints show up? Is it worth the price?",
+      "query_family": "value_complaint",
+      "answer": "Based on the provided excerpts, the following value-related complaints can be identified:\n\n1. [Chunk 1] - The reviewer expresses dissatisfaction with the product's pricing, stating that disliking one flavor is a \"GREAT LOSS\" considering the price-point.\n2. [Chunk 4] - Although not explicitly stated, the reviewer mentions that the product did \"ok\" for winter and didn't react terribly, implying that it might not be worth the investment for regular use.\n\nAs for whether the product is worth the price, opinions are mixed:\n\n1. [Chunk 5] - The reviewer likes the product's cleansing, scent, and moisturizing properties, suggesting that it provides good value in these aspects.\n2. [Chunk 4] - However, the same reviewer stops using the product due to staining issues, implying that the benefits might not outweigh the drawbacks.\n\nInsufficient evidence in the retrieved excerpts to determine a clear consensus on whether the product is worth its price.",
+      "prompt_template_id": "family_value_complaint",
+      "prompt_template_label": "Value-related complaints",
+      "chunk_ids_used": [
+        "B07NQN58ZC_33_0",
+        "B071YYMZ19_2_0",
+        "B07WDL82Z4_19_0",
+        "B071YYMZ19_6_0",
+        "B007O0GQPC_26_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": true,
+      "rerank_reason": "selective:family_on:value_complaint",
+      "strategy_reason": "complaint_task_light_hybrid",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae004",
+      "query": "Do reviewers report counterfeit or fake items?",
+      "query_family": "exact_issue_lookup",
+      "answer": "According to the excerpts, yes, some reviewers have reported concerns about counterfeit or fake products. Specifically, Chunk 1 states \"Do not buy this from Amazon it's either defective or counterfeit\", and Chunk 2 says \"Dont buy this from amazon!!!! I never write reviews but felt others should know this. It isn't the real product...\"",
+      "prompt_template_id": "family_exact_issue_lookup",
+      "prompt_template_label": "Exact issue lookup",
+      "chunk_ids_used": [
+        "B071YYMZ19_2_0",
+        "B071YYMZ19_4_0",
+        "B071YYMZ19_3_0",
+        "B071YYMZ19_7_0",
+        "B07WDL82Z4_18_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:family_off:exact_issue_lookup",
+      "strategy_reason": "issue_keywords",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae005",
+      "query": "What defects or damage problems appear most often?",
+      "query_family": "abstract_complaint_summary",
+      "answer": "Based on the provided excerpts, the following defect or damage problem appears:\n\n* Clumps in the stick (Chunk 2) that can cause overapplication and messiness.\n* Staining of clothes, specifically gray and oily stains (Chunks 3 and 4).",
+      "prompt_template_id": "family_exact_issue_lookup",
+      "prompt_template_label": "Exact issue lookup",
+      "chunk_ids_used": [
+        "B07WDL82Z4_18_0",
+        "B071YYMZ19_2_0",
+        "B071YYMZ19_3_0",
+        "B071YYMZ19_6_0",
+        "B07WDL82Z4_19_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:family_off:exact_issue_lookup",
+      "strategy_reason": "issue_keywords",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae006",
+      "query": "List specific symptoms like rash or skin irritation if mentioned.",
+      "query_family": "exact_issue_lookup",
+      "answer": "Based on the excerpts, the following specific symptoms are mentioned:\n\n* Cysts from aluminum antiperspirants (Chunk 1)\n* Burning sensation with a rash (Chunk 1)\n* Discomfort, red and raw-looking underarms, and burning ache (Chunk 2)\n* Rashes from almost all deodorants, but not from using this product (Chunk 3)\n\nThese symptoms are mentioned in the excerpts as issues or concerns related to the use of the product.",
+      "prompt_template_id": "family_exact_issue_lookup",
+      "prompt_template_label": "Exact issue lookup",
+      "chunk_ids_used": [
+        "B071YYMZ19_3_0",
+        "B071YYMZ19_7_0",
+        "B07WDL82Z4_12_0",
+        "B007O0GQPC_25_0",
+        "B005C2NA4E_36_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "general_qa",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:family_off:exact_issue_lookup",
+      "strategy_reason": "issue_keywords",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae007",
+      "query": "What do three-star reviews say about overall satisfaction?",
+      "query_family": "rating_scoped_summary",
+      "answer": "Insufficient evidence in the retrieved excerpts to determine what three-star reviews say about overall satisfaction, as no three-star ratings or corresponding reviews are present in the provided excerpts.",
+      "prompt_template_id": "task_general_qa",
+      "prompt_template_label": "General QA (task)",
+      "chunk_ids_used": [
+        "B007O0GQPC_27_0",
+        "B071YYMZ19_4_0",
+        "B07NQN58ZC_33_0",
+        "B005C2NA4E_39_0",
+        "B007O0GQPC_26_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "general_qa",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:default_off:family=unknown",
+      "strategy_reason": "default_vector",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae008",
+      "query": "Overall themes in negative experiences with this product.",
+      "query_family": "abstract_complaint_summary",
+      "answer": "Based on the provided excerpts, the overall themes in negative experiences with this product are:\n\n1. **Poor quality**: Some users received a counterfeit or fake product (Chunk 1) that did not meet their expectations.\n2. **Unpleasant smell**: Several reviewers mentioned that the deodorant had an unpleasant odor, making them feel self-conscious or embarrassed (Chunks 2 and 4).\n3. **Skin irritation**: A few users experienced skin irritation, such as tearing of armpits (Chunk 1), rashes with burning sensations (Chunk 4), or cysts from aluminum antiperspirants (Chunk 4).\n4. **Staining**: Some reviewers reported that the deodorant stained their clothes, including gray and oily stains (Chunks 3 and 4).\n\nThese themes suggest that some users had a negative experience with this product due to issues with quality, smell, skin irritation, or staining.",
+      "prompt_template_id": "family_rating_scoped_summary",
+      "prompt_template_label": "Rating-scoped summary",
+      "chunk_ids_used": [
+        "B071YYMZ19_4_0",
+        "B07WDL82Z4_21_0",
+        "B071YYMZ19_6_0",
+        "B071YYMZ19_3_0",
+        "B07NQN58ZC_33_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:metadata_rating_filter",
+      "strategy_reason": "abstract_summary_vector",
+      "filters": {
+        "review_rating": {
+          "max": 3
+        }
+      }
+    },
+    {
+      "answer_eval_id": "ae009",
+      "query": "Is the product considered good value for money in the reviews?",
+      "query_family": "value_complaint",
+      "answer": "Based on the excerpts, it's unclear if the product is generally considered good value for money. However, one reviewer mentions that they like that the soap \"Last longer for the money\" (Chunk 3), implying that the product provides good value. On the other hand, two reviewers advise against buying the product from Amazon due to concerns about counterfeit or defective products (Chunks 1 and 4). No reviews explicitly state that the product is not a good value for money.",
+      "prompt_template_id": "task_general_qa",
+      "prompt_template_label": "General QA (task)",
+      "chunk_ids_used": [
+        "B071YYMZ19_4_0",
+        "B00FYZJPAM_28_0",
+        "B007O0GQPC_27_0",
+        "B071YYMZ19_2_0",
+        "B005C2NA4E_39_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "general_qa",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:default_off:family=unknown",
+      "strategy_reason": "default_vector",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae010",
+      "query": "Any mentions of texture, smell, or consistency issues?",
+      "query_family": "exact_issue_lookup",
+      "answer": "Based on the provided excerpts, here's what I found:\n\n* Texture issue: In Chunk 3, the reviewer mentions that the deodorant \"felt like I'd taken sandpaper to my underarms\" after wearing it for a few hours. This suggests a texture or consistency issue that caused discomfort.\n* Smell: As mentioned in multiple excerpts (Chunks 1, 2, and 4), the product has an interesting smell, described as citrusy and fennel-like or fresh and pleasant.\n* Consistency issue: In Chunk 3, the reviewer also mentions that the deodorant \"glopped\" on some products. This could imply a consistency issue with application.\n\nThese excerpts do not address any concerns about defects, symptoms, or counterfeit products.",
+      "prompt_template_id": "family_exact_issue_lookup",
+      "prompt_template_label": "Exact issue lookup",
+      "chunk_ids_used": [
+        "B07WDL82Z4_18_0",
+        "B07WDL82Z4_19_0",
+        "B071YYMZ19_7_0",
+        "B071YYMZ19_1_0",
+        "B007O0GQPC_25_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:family_off:exact_issue_lookup",
+      "strategy_reason": "issue_keywords",
+      "filters": {}
+    },
+    {
+      "answer_eval_id": "ae011",
+      "query": "What do reviewers say about low-rated experiences in general?",
+      "query_family": "rating_scoped_summary",
+      "answer": "Based on the provided excerpts, it appears that reviewers who had low-rated experiences with the products mentioned several common themes:\n\n* Disappointment or frustration with the product's performance (e.g., \"I DISLIKED 5 of the 8 flavors I tried & I dislike ALL the multi-layer flavors!\" in Chunk 1).\n* Issues with packaging or usability (e.g., \"IMPOSSIBLE TO OPEN!!\" in Chunk 3).\n* Poor quality or counterfeit products when purchased from third-party sellers (e.g., \"Dont buy this from amazon!!!! It isn't the real product...\" in Chunk 2).\n\nThese reviewers expressed disappointment, frustration, and even anger with their experiences. They often emphasized the negative aspects of their interactions with the products or retailers.\n\nEvidence: Chunks 1-3.",
+      "prompt_template_id": "family_rating_scoped_summary",
+      "prompt_template_label": "Rating-scoped summary",
+      "chunk_ids_used": [
+        "B07NQN58ZC_33_0",
+        "B071YYMZ19_4_0",
+        "B07NQN58ZC_29_0",
+        "B071YYMZ19_3_0",
+        "B071YYMZ19_3_1"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "general_qa",
+      "request_use_rerank": false,
+      "rerank_reason": "selective:metadata_rating_filter",
+      "strategy_reason": "default_vector",
+      "filters": {
+        "review_rating": {
+          "max": 3
+        }
+      }
+    },
+    {
+      "answer_eval_id": "ae012",
+      "query": "Briefly: what problems should a buyer watch out for?",
+      "query_family": "abstract_complaint_summary",
+      "answer": "Based on the provided excerpts, there are several potential issues that buyers should be aware of:\n\n* Difficulty opening the product (Chunk 1)\n* Risk of purchasing a counterfeit or fake product from Amazon (Chunk 2), which may not provide the expected quality or performance.\n* Potential skin irritation from the charcoal chunks in the deodorant (Chunk 2)\n\nThere are no complaints about value, price, or quality-for-price in these excerpts. However, it's worth noting that one reviewer found a suitable alternative for their baking soda allergy and had positive experiences with this product (Chunk 5).",
+      "prompt_template_id": "family_value_complaint",
+      "prompt_template_label": "Value-related complaints",
+      "chunk_ids_used": [
+        "B07NQN58ZC_29_0",
+        "B071YYMZ19_4_0",
+        "B007O0GQPC_25_0",
+        "B00FYZJPAM_28_0",
+        "B07WDL82Z4_20_0"
+      ],
+      "llm_backend": "ollama",
+      "llm_model": "llama3",
+      "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
+      "request_task_type": "complaint_summary",
+      "request_use_rerank": true,
+      "rerank_reason": "selective:family_on:value_complaint",
+      "strategy_reason": "complaint_task_light_hybrid",
+      "filters": {}
+    }
+  ]
+}
