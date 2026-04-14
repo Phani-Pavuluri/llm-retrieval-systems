@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Manual Phase-4 answer quality labels. Run scripts/run_answer_eval.py, then fill scores (1=poor, 2=mixed, 3=good). If any score is <3 or the answer misfired, set failure_bucket to one canonical value (see failure_buckets); use null when there is no single primary failure.",
+  "description": "Manual Phase-4 answer quality labels. query_family MUST match QueryParser/infer_query_family for each query so summarize_answer_eval by-family aggregates align with runtime routing (Phase 4.5+).",
   "rubric": {
     "grounded": "1 = unsupported or hallucinated claims; 3 = claims tightly tied to retrieved excerpts.",
     "correct": "1 = wrong relative to evidence; 3 = accurate.",
@@ -31,7 +31,7 @@
       "query_family": "abstract_complaint_summary",
       "scores": { "grounded": 3, "correct": 2, "complete": 2 },
       "failure_bucket": "wrong_scope",
-      "notes": "Phase44 rerun: thematic bullets and multi-chunk use improved, but first theme leads with non-complaints (no irritation) under a complaint question—positive leakage in structure."
+      "notes": "Phase45 rerun: still opens Irritation theme with no-rash / non-complaint lines; counterfeit/seeds better separated. Template abstract."
     },
     {
       "id": "ae002",
@@ -39,7 +39,7 @@
       "query_family": "rating_scoped_summary",
       "scores": { "grounded": 3, "correct": 3, "complete": 3 },
       "failure_bucket": null,
-      "notes": "Phase44 rerun: filters now review_rating==1; answer themes and chunks align with literal one-star scope (parser+prompt fix)."
+      "notes": "Phase45 rerun: review_rating==1; themed bullets across chunks; aligned with filter."
     },
     {
       "id": "ae003",
@@ -47,7 +47,7 @@
       "query_family": "value_complaint",
       "scores": { "grounded": 3, "correct": 3, "complete": 3 },
       "failure_bucket": null,
-      "notes": "Phase44 rerun: structured value themes; hedged worth-the-price appropriately from excerpts."
+      "notes": "Phase45 rerun: value template; price vs quality + hedged worth-the-price."
     },
     {
       "id": "ae004",
@@ -55,47 +55,47 @@
       "query_family": "exact_issue_lookup",
       "scores": { "grounded": 3, "correct": 3, "complete": 3 },
       "failure_bucket": null,
-      "notes": "Phase44 rerun: tight yes with chunk cites."
+      "notes": "Phase45 rerun: explicit chunk quotes for counterfeit."
     },
     {
       "id": "ae005",
       "query": "What defects or damage problems appear most often?",
-      "query_family": "abstract_complaint_summary",
+      "query_family": "exact_issue_lookup",
       "scores": { "grounded": 3, "correct": 2, "complete": 2 },
       "failure_bucket": "weak_synthesis",
-      "notes": "Phase44 rerun: cites defects with chunks but still does not address frequency / most-often (routing still issue_keywords / exact_issue template)."
+      "notes": "Phase45 rerun: lists defects with chunks but still no frequency / most-often ranking. Family=family_exact_issue_lookup at runtime."
     },
     {
       "id": "ae006",
       "query": "List specific symptoms like rash or skin irritation if mentioned.",
-      "query_family": "exact_issue_lookup",
-      "scores": { "grounded": 2, "correct": 2, "complete": 2 },
-      "failure_bucket": "hallucination",
-      "notes": "Phase44 rerun: shorter list but still bundles Chunk3 rashes with reviewers who used this product—risk of same misattribution vs excerpt that disclaims this product."
+      "query_family": "symptom_issue_extraction",
+      "scores": { "grounded": 3, "correct": 3, "complete": 2 },
+      "failure_bucket": "weak_synthesis",
+      "notes": "Phase45 rerun: symptom extraction template; Chunk1 (B071YYMZ19_3_0) rash/burning attributed to this deodorant matches excerpt (dermatologist). Does not survey other chunks for additional/disclaiming lines—thin extraction."
     },
     {
       "id": "ae007",
       "query": "What do three-star reviews say about overall satisfaction?",
-      "query_family": "rating_scoped_summary",
+      "query_family": "unknown",
       "scores": { "grounded": 3, "correct": 3, "complete": 3 },
       "failure_bucket": null,
-      "notes": "Phase44 rerun: correctly states no 3-star in pool; cites chunk tones."
+      "notes": "Phase45 rerun: clear insufficient-evidence for 3-star; star band claims—spot-check chunks if needed. Parser family=unknown (no rating filter phrase)."
     },
     {
       "id": "ae008",
       "query": "Overall themes in negative experiences with this product.",
-      "query_family": "abstract_complaint_summary",
-      "scores": { "grounded": 3, "correct": 2, "complete": 3 },
-      "failure_bucket": "weak_synthesis",
-      "notes": "Phase44 rerun: better structure and filter note, but Odor section mixes negative smell with neutral/positive scent phrasing—theme purity still imperfect."
+      "query_family": "rating_scoped_summary",
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase45 rerun: rating_scoped + low-rating filter; themes mostly clean; closing note clarifies sweat/odor theme absence."
     },
     {
       "id": "ae009",
       "query": "Is the product considered good value for money in the reviews?",
       "query_family": "value_complaint",
-      "scores": { "grounded": 3, "correct": 2, "complete": 2 },
-      "failure_bucket": "wrong_scope",
-      "notes": "Phase44 rerun: still routed to general_qa not value_complaint; answer hedges with counterfeit vs value—pipeline routing unchanged."
+      "scores": { "grounded": 3, "correct": 3, "complete": 3 },
+      "failure_bucket": null,
+      "notes": "Phase45 rerun: value_complaint template + selective rerank on—major routing fix vs Phase44 general_qa; hedged conclusion grounded in chunks."
     },
     {
       "id": "ae010",
@@ -103,7 +103,7 @@
       "query_family": "exact_issue_lookup",
       "scores": { "grounded": 3, "correct": 2, "complete": 2 },
       "failure_bucket": "wrong_scope",
-      "notes": "Phase44 rerun: clearer issue vs non-issue layout, but still highlights positive smell under an issues question."
+      "notes": "Phase45 rerun: still treats neutral/positive smell as smell 'section' for an issues question."
     },
     {
       "id": "ae011",
@@ -111,15 +111,15 @@
       "query_family": "rating_scoped_summary",
       "scores": { "grounded": 3, "correct": 3, "complete": 3 },
       "failure_bucket": null,
-      "notes": "Phase44 rerun: strong themed bullets with chunk support under low-rating filter."
+      "notes": "Phase45 rerun: strong multi-theme bullets under max≤3 filter."
     },
     {
       "id": "ae012",
       "query": "Briefly: what problems should a buyer watch out for?",
-      "query_family": "abstract_complaint_summary",
+      "query_family": "buyer_risk_issues",
       "scores": { "grounded": 3, "correct": 3, "complete": 3 },
       "failure_bucket": null,
-      "notes": "Phase44 rerun: still value_complaint template but synthesis now matches buyer-risk ask; concrete problems with cites."
+      "notes": "Phase45 rerun: buyer_risk_issues template + rerank on; pitfalls not price—two substantive bullets (counterfeit, skin/charcoal) with Chunk 2."
     }
   ]
 }

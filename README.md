@@ -1,104 +1,33 @@
-# RAG System Shell: Modular LLM Retrieval System
+# LLM Retrieval Systems (RAG shell)
 
-## Overview
-This project implements a **modular Retrieval-Augmented Generation (RAG) system** designed as a reusable shell for building LLM-powered applications across different domains.
+Rule-based **query → retrieval → (optional) rerank → prompt → LLM** pipeline over chunked review text, with **traces**, **manual answer eval**, and **selective reranking**.
 
-The system combines:
-- Semantic retrieval using embeddings
-- Structured data filtering
-- LLM-based reasoning and answer generation
+## Stack (short)
 
-While the initial implementation uses an Amazon product reviews dataset, the architecture is **domain-agnostic** and can be adapted to use cases such as:
-- Marketing analytics
-- Customer support copilots
-- Knowledge base assistants
-- Experimentation insights
+`QueryParser` → `Retriever` / `retrieval_strategy` → optional **cross-encoder rerank** (`rerank_policy` gates it) → `prompt_builder` → Ollama or OpenAI.
 
----
+## Docs
 
-## Motivation
+**System evolution (phases, metrics, limitations):** [SYSTEM_EVOLUTION.md](SYSTEM_EVOLUTION.md)  
+**Roadmaps:** [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) (product / Phase 5.x), [ML_CAPABILITIES_ROADMAP.md](ML_CAPABILITIES_ROADMAP.md) (ML / Phase 6)
 
-Modern data science roles increasingly require building **end-to-end AI systems**, not just models.
+| File | Purpose |
+|------|---------|
+| [SYSTEM_OVERVIEW.md](SYSTEM_OVERVIEW.md) | Architecture & data flow (interview-style) |
+| [SYSTEM_EVOLUTION.md](SYSTEM_EVOLUTION.md) | Phased changes, problems, fixes, **measured** impact |
+| [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md), [ML_CAPABILITIES_ROADMAP.md](ML_CAPABILITIES_ROADMAP.md) | Product (Phase 5.x) vs ML / analytics (Phase 6) forward plan |
+| [DAILY_LOG.md](DAILY_LOG.md) | Append-only change log |
 
-This project focuses on:
-- Understanding how LLM systems work under the hood
-- Designing reliable retrieval pipelines
-- Evaluating and improving answer quality
-- Building reusable system architecture
+## Quick start
 
----
-
-## System Architecture
-
-User Query → Embedding → Vector Search (FAISS) → Top-K Chunks → Prompt → LLM → Answer
-
----
-
-## Key Components
-
-### Data Layer
-Loads and processes dataset and separates structured/unstructured data.
-
-### Chunking
-Splits text into overlapping chunks for retrieval.
-
-### Embeddings
-Supports:
-- Sentence Transformers (local)
-- OpenAI (optional)
-
-### Vector Store
-FAISS-based similarity search.
-
-### Retriever
-Fetches relevant chunks for a query.
-
-### RAG Pipeline
-Generates grounded answers using retrieved context.
-
----
-
-## Project Structure
-
-amazon-rag-shell/
-├── data/
-├── notebooks/
-├── src/
-├── scripts/
-├── tests/
-└── README.md
-
----
-
-## Example Queries
-
-- What complaints do users have about battery life?
-- Which products mention durability issues?
-- Summarize customer feedback trends
-
----
-
-## Roadmap
-
-Stage 1: Basic RAG  
-Stage 2: Hybrid retrieval + filtering  
-Stage 3: Routing + tools  
-Stage 4: Evaluation  
-Stage 5: Advanced orchestration (LangGraph)
-
----
-
-## Getting Started
-
+```bash
 pip install -r requirements.txt
+# Place sample data under data/ per config, then:
+PYTHONPATH=. python scripts/build_index.py
+PYTHONPATH=. python scripts/run_query.py "Your question"
+```
 
-Add dataset to data/raw/
-
-Run:
-python scripts/build_index.py  
-python scripts/run_query.py
-
----
+Answer eval (12 labeled queries): `scripts/run_answer_eval.py` → summarize with `scripts/summarize_answer_eval.py` (labels in `eval/answer_eval_labeled.json`).
 
 ## Author
 

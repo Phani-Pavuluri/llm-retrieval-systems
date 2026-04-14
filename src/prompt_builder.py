@@ -234,12 +234,35 @@ def _template_label(template_id: str) -> str:
     return labels.get(template_id, template_id)
 
 
+def _output_style_instruction(hints: dict[str, Any] | None) -> str:
+    """Structured Phase 5.4 hints — deterministic text, not free-form model memory."""
+    if not hints:
+        return ""
+    lines: list[str] = [
+        "Output constraints (conversation follow-up — obey without inventing facts beyond excerpts):"
+    ]
+    if hints.get("brevity") == "short":
+        lines.append("- Keep the answer concise (shorter than a typical full summary unless evidence is very thin).")
+    if hints.get("format") == "bullets":
+        lines.append("- Use clear bullet points.")
+    mi = hints.get("max_issues")
+    if mi is not None:
+        try:
+            lines.append(f"- Focus on at most {int(mi)} distinct issues or themes.")
+        except (TypeError, ValueError):
+            pass
+    if len(lines) == 1:
+        return ""
+    return "\n".join(lines) + "\n\n"
+
+
 def build_answer_prompt(
     request: RetrievalRequest,
     user_question: str,
     retrieved: pd.DataFrame,
     *,
     template_id: str | None = None,
+    output_style_hints: dict[str, Any] | None = None,
 ) -> BuiltAnswerPrompt:
     """
     Assemble the full user prompt for one RAG turn.
@@ -275,7 +298,7 @@ Excerpts (only source of truth):
 User question:
 {user_question.strip()}
 
-Write your answer now:"""
+{_output_style_instruction(output_style_hints)}Write your answer now:"""
 
     return BuiltAnswerPrompt(
         prompt=prompt.strip(),

@@ -156,10 +156,12 @@ def main() -> None:
             continue
 
         # One JSONL line per query is appended by RAGPipeline (answer_trace_out); do not duplicate here.
+        req = result["request"]
         row = {
             "answer_eval_id": qid,
             "query": result.get("query"),
-            "query_family": qfam,
+            "query_family": getattr(req, "query_family", None) or qfam,
+            "eval_file_query_family": qfam,
             "answer": result.get("answer"),
             "prompt_template_id": result.get("prompt_template_id"),
             "prompt_template_label": result.get("prompt_template_label"),
@@ -167,11 +169,11 @@ def main() -> None:
             "llm_backend": result.get("llm_backend"),
             "llm_model": result.get("llm_model"),
             "answer_trace_path": result.get("answer_trace_path"),
-            "request_task_type": result["request"].task_type,
-            "request_use_rerank": result["request"].use_rerank,
-            "rerank_reason": result["request"].rerank_reason,
-            "strategy_reason": result["request"].strategy_reason,
-            "filters": dict(result["request"].filters),
+            "request_task_type": req.task_type,
+            "request_use_rerank": req.use_rerank,
+            "rerank_reason": req.rerank_reason,
+            "strategy_reason": req.strategy_reason,
+            "filters": dict(req.filters),
         }
         runs.append(row)
         print(f"[{qid}] ok  chunks={len(result.get('chunk_ids_used') or [])}")

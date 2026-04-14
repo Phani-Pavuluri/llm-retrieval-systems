@@ -1,6 +1,6 @@
 {
   "manifest": {
-    "ts": "2026-04-13T22:28:54.908111+00:00",
+    "ts": "2026-04-13T23:07:16.704965+00:00",
     "eval_file": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/eval/answer_eval_labeled.json",
     "out_jsonl": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
     "k": 5,
@@ -16,7 +16,7 @@
       "answer_eval_id": "ae001",
       "query": "What are common complaints about this product?",
       "query_family": "abstract_complaint_summary",
-      "answer": "### Irritation / skin\n\n* Some users reported not experiencing irritation or rashes with this product, unlike other deodorants they've tried [Chunk 1]\n* No further specific complaints about skin issues found in the excerpts\n\n### Other concerns\n\n* One reviewer mentioned disliking the seeds in the product [Chunk 4]\n* A separate issue was raised about purchasing a fake version of this product from Amazon, which caused armpit irritation due to the charcoal chunks tearing up skin [Chunk 5]",
+      "answer": "### Irritation / Skin\n\n* No reported rashes or skin issues with using this product (Chunk 1)\n\t+ Chunk 1 does not mention any specific skin problems, only stating that the user did not get a rash when using it.\n* Seeds can be a nuisance (Chunk 4)\n\t+ This is the only minor complaint mentioned in the excerpts regarding the product.\n\n### Other issues\n\n* Counterfeit product concerns (Chunk 5)\n\t+ A reviewer had a bad experience purchasing this product from Amazon, suspecting that it was not the authentic product.\n\t+ No specific complaints about the product itself are reported in Chunk 5, only warnings to avoid counterfeit products.",
       "prompt_template_id": "family_abstract_complaint_summary",
       "prompt_template_label": "Abstract / thematic complaint summary",
       "chunk_ids_used": [
@@ -39,7 +39,7 @@
       "answer_eval_id": "ae002",
       "query": "Summarize negative one-star experiences mentioned in the reviews.",
       "query_family": "rating_scoped_summary",
-      "answer": "### Counterfeit Concerns\n* Customers were sent counterfeit products instead of the actual product, as described in [Chunk 1] and [Chunk 4]. (Chunk 1 & Chunk 4)\n* Products from Amazon were defective or of poor quality, as stated in [Chunk 4].\n\n### Unpleasant Odor\n* The deodorant had a strong, unpleasant smell that was unbearable, according to [Chunk 2].\n\n### Skin Irritation\n* The charcoal chunks in the deodorant caused skin irritation and tearing in the armpits, as mentioned in [Chunk 1].\n\n### Product Quality Issues\n* The product was difficult to open or impossible to use, as stated in [Chunk 3].",
+      "answer": "### Counterfeit/Cheap Product Issues\n\n* The product purchased from Amazon is not the real deal, causing issues with the charcoal chunks tearing up armpits (Chunk 1).\n* Similarly, another reviewer experienced a defective or counterfeit product when buying it from Amazon, which caused clumps and overapplication problems (Chunk 4).\n\n### Packaging/Opening Issues\n\n* One reviewer struggled to open the product, making it impossible to try (Chunk 3).\n\n### Unpleasant Smell\n\n* Another reviewer had to stop using the product after two days due to an unbearable smell that made them smell like a dying old man (Chunk 2).",
       "prompt_template_id": "family_rating_scoped_summary",
       "prompt_template_label": "Rating-scoped summary",
       "chunk_ids_used": [
@@ -63,7 +63,7 @@
       "answer_eval_id": "ae003",
       "query": "What value-related complaints show up? Is it worth the price?",
       "query_family": "value_complaint",
-      "answer": "### Value-Related Complaints\n\n* **Insufficient quality for price** (Chunk 2)\n\t+ One reviewer experienced issues with the product being either defective or counterfeit when purchased from Amazon, which suggests that the quality may not be consistent with the expected value at this price point.\n* **Loss of enjoyment due to dislike** (Chunk 1)\n\t+ Another reviewer expresses disappointment and frustration when they don't enjoy a particular flavor, feeling it's a \"GREAT LOSS\" considering the price-point. This highlights the importance of finding a product that suits one's taste preferences.\n\n### Is it worth the price?\n\n* **Mixed opinions on quality and value** (Chunks 1, 4)\n\t+ While some reviewers seem to appreciate certain aspects of the product, others experience issues with its performance or quality. This mix of opinions makes it difficult to conclude whether the product is worth the price.\n* **Alternative options available** (Chunk 2)\n\t+ One reviewer specifically recommends buying this product from Costco instead of Amazon, implying that there may be better value options available in the market.\n\nNote: There is no explicit complaint about the product being overpriced or not worth the price. The value-related complaints focus on issues with quality and personal preferences rather than pricing.",
+      "answer": "### Price vs quality\n\n* Chunk 2 mentions a defect or counterfeit product when buying from Amazon, which suggests that some products may not be worth the price.\n\t+ Evidence: [Chunk 2 | id=B071YYMZ19_2_0]\n\n* Chunk 4 highlights staining on shirts as a consequence of using this product, implying that it may not provide good value for its price.\n\t+ Evidence: [Chunk 4 | id=B071YYMZ19_6_0]\n* No other chunks specifically mention complaints about the price or quality.\n\n### Worth the price?\n\n* Chunk 1 mentions that one person dislikes some flavors and considers the price-point too high, implying that it may not be worth it if you dislike certain flavors.\n\t+ Evidence: [Chunk 1 | id=B07NQN58ZC_33_0]\n* Chunk 5 expresses a positive experience with the product's cleansing, scent, and moisturizing properties, but doesn't explicitly comment on whether it's worth the price.\n\t+ Evidence: [Chunk 5 | id=B007O0GQPC_26_0]\n\nNo other chunks address this question directly.",
       "prompt_template_id": "family_value_complaint",
       "prompt_template_label": "Value-related complaints",
       "chunk_ids_used": [
@@ -86,7 +86,7 @@
       "answer_eval_id": "ae004",
       "query": "Do reviewers report counterfeit or fake items?",
       "query_family": "exact_issue_lookup",
-      "answer": "According to the excerpts:\n\n• [Chunk 1 | id=B071YYMZ19_2_0] explicitly states that the reviewer believes the product is either defective or counterfeit when purchased from Amazon.\n• [Chunk 2 | id=B071YYMZ19_4_0] also warns against buying this deodorant from Amazon, stating that it's not the real product and will cause issues.\n\nThese two chunks collectively suggest that reviewers have reported purchasing counterfeit or fake items when buying this deodorant from Amazon.",
+      "answer": "Based on the provided excerpts (Chunks 1 and 2), reviewers explicitly state that they received counterfeit or fake products when buying from Amazon. Chunk 1 mentions \"it's either defective or counterfeit\" and Chunk 2 warns against buying from Amazon, stating \"It isn’t the real product\". \n\nEvidence:\n\n* [Chunk 1 | id=B071YYMZ19_2_0] - \"Do not buy this from Amazon it's either defective or counterfeit.\"\n* [Chunk 2 | id=B071YYMZ19_4_0] - \"Dont buy this from amazon!!!! I never write reviews but felt others should know this. It isn’t the real product...\"",
       "prompt_template_id": "family_exact_issue_lookup",
       "prompt_template_label": "Exact issue lookup",
       "chunk_ids_used": [
@@ -109,7 +109,7 @@
       "answer_eval_id": "ae005",
       "query": "What defects or damage problems appear most often?",
       "query_family": "abstract_complaint_summary",
-      "answer": "Based on the provided excerpts, the following defects or damage problems appear:\n\n* Clumps throughout the stick (Chunk 2): \"there are clumps throughout the stick and it causes the product to overapply and get messy.\"\n* Staining (Chunks 3 & 4): The reviewer mentions that the deodorant \"does stain gray and oily\" (Chunk 3) and also notes that it is staining their shirts (Chunk 4).\n\nNote: These defects are mentioned explicitly by reviewers in the provided excerpts, and I have not inferred or added any information beyond what is stated.",
+      "answer": "Based on the excerpts, some defects or damage problems mentioned are:\n\n* Clumps throughout the stick (Chunk 2)\n* Causes product to overapply and get messy (Chunk 2)\n* Stains gray and oily (Chunk 3)\n* Stains shirts (Chunk 4)\n\nThese issues appear in Chunks 2, 3, and 4.",
       "prompt_template_id": "family_exact_issue_lookup",
       "prompt_template_label": "Exact issue lookup",
       "chunk_ids_used": [
@@ -132,9 +132,9 @@
       "answer_eval_id": "ae006",
       "query": "List specific symptoms like rash or skin irritation if mentioned.",
       "query_family": "exact_issue_lookup",
-      "answer": "Based on the provided excerpts, the following specific symptoms are mentioned:\n\n• Burning sensation (Chunk 1)\n• Redness and raw-looking underarms (Chunk 2)\n• Rashes (Chunk 3)\n\nThese symptoms were experienced by individual reviewers who used the product.",
-      "prompt_template_id": "family_exact_issue_lookup",
-      "prompt_template_label": "Exact issue lookup",
+      "answer": "Here is the answer based on the provided excerpts:\n\n* **Rash**: [Chunk 1 | id=B071YYMZ19_3_0] mentions a \"serious rash with a burning sensation\" caused by using this product, especially after shaving.\n\t+ Note: This symptom is mentioned as being caused by the deodorant, not as an absence of rash.\n* **Skin irritation**: [Chunk 1 | id=B071YYMZ19_3_0] mentions \"burning sensation\" and \"red and raw looking\" skin caused by using this product after shaving.",
+      "prompt_template_id": "family_symptom_issue_extraction",
+      "prompt_template_label": "Symptom / reaction extraction",
       "chunk_ids_used": [
         "B071YYMZ19_3_0",
         "B071YYMZ19_7_0",
@@ -147,7 +147,7 @@
       "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
       "request_task_type": "general_qa",
       "request_use_rerank": false,
-      "rerank_reason": "selective:family_off:exact_issue_lookup",
+      "rerank_reason": "selective:family_off:symptom_issue_extraction",
       "strategy_reason": "issue_keywords",
       "filters": {}
     },
@@ -155,7 +155,7 @@
       "answer_eval_id": "ae007",
       "query": "What do three-star reviews say about overall satisfaction?",
       "query_family": "rating_scoped_summary",
-      "answer": "Based on the excerpts provided, there is no three-star review mentioned. The ratings mentioned are \"very pleased\" (Chunk 1), a warning to avoid buying from Amazon (Chunk 2), dislike of some flavors but liking others (Chunk 3), absolute love for the body oil (Chunk 4), and general liking with a single dislike (Chunk 5). There is no explicit mention of three-star reviews.",
+      "answer": "Insufficient evidence in the retrieved excerpts to provide an answer regarding three-star reviews as none of the provided excerpts contain a three-star review. The available excerpts range from one-star (Chunk 2) to four-star (Chunk 3, Chunk 4) or five-star (Chunk 1, Chunk 5).",
       "prompt_template_id": "task_general_qa",
       "prompt_template_label": "General QA (task)",
       "chunk_ids_used": [
@@ -178,7 +178,7 @@
       "answer_eval_id": "ae008",
       "query": "Overall themes in negative experiences with this product.",
       "query_family": "abstract_complaint_summary",
-      "answer": "### Skin and Application Issues\n* Chunk 1: Armpits may tear up due to charcoal chunks.\n* Chunk 3: Stains clothes, especially light or thin ones.\n\n### Odor and Smell\n* Chunk 2: Product makes you smell like a dying old man.\n* Chunk 4: Has a mineraly fresh scent, but not effective at preventing sweat and odor reduction in summer or during exercise.\n\n### Ineffective Use Cases\n* Chunk 4: Not suitable for use after shaving, especially within the first two days. Also, not as effective during exercise.\n\nNote: These themes are based on negative experiences with the product, only considering excerpts with a review rating of ≤ 3 (as per the retrieval scope).",
+      "answer": "### Irritation / skin\n* Chunk 1: The charcoal chunks tear armpits up. [Chunk 1]\n* Chunk 4: Sensitive skin, especially after shaving, had a burning sensation and was initially attributed to the deodorant. Now it's known that applying it during or shortly after shaving is problematic.\n\n### Odor\n* Chunk 2: The smell is so bad that using it for two days is enough to stop; it honestly makes you smell like a dying old man.\n* Chunk 3: Initially, the product didn't have a terrible odor, but it's not near as good-smelling as antiperspirant.\n\n### Staining\n* Chunk 4: The deodorant stains gray and oily, and it's recommended not to wear it on thin or nice clothes.\n\nNote: There is no theme about complaint or dissatisfaction with the product's ability to prevent sweat or reduce odor.",
       "prompt_template_id": "family_rating_scoped_summary",
       "prompt_template_label": "Rating-scoped summary",
       "chunk_ids_used": [
@@ -205,22 +205,22 @@
       "answer_eval_id": "ae009",
       "query": "Is the product considered good value for money in the reviews?",
       "query_family": "value_complaint",
-      "answer": "Based on the excerpts provided, here's my answer:\n\n**Value for Money**\n\n* Some reviewers seem to think so:\n\t+ [Chunk 3] mentions that the soap \"Last longer for the money\" and the reviewer is \"Overall very pleased.\"\n\t+ [Chunk 5] uses superlatives (\"absolutely love\") to describe the body oil, which suggests a positive value-for-money assessment.\n* However, there are also warnings about counterfeit or defective products:\n\t+ [Chuncks 1 & 4] advise against buying from Amazon due to concerns about authenticity and quality.\n\nNote: The excerpts do not provide conclusive evidence on this topic. While some reviewers seem pleased with the product's value for money, others have had issues with counterfeit or defective products.",
-      "prompt_template_id": "task_general_qa",
-      "prompt_template_label": "General QA (task)",
+      "answer": "### Value for Money\n\n* Chunk 2: Not explicitly mentioned, but the reviewer is \"pleased\" with the soap's performance, suggesting it provides good value.\n\t+ Cites evidence from Chunk 2\n* Chunk 3: The reviewer mentions that the product is a bit pricier than usual store-bought options, but they couldn't resist trying it. This implies that the reviewer found some value in the product, despite not planning to purchase it again.\n\t+ Cites evidence from Chunk 3\n\nInsufficient evidence in the retrieved excerpts to make a conclusive statement about whether the product is considered good value for money overall. However, based on the positive comments in Chunks 2 and 3, it appears that some reviewers found the product provided good value, while others may not have been satisfied with their purchase.",
+      "prompt_template_id": "family_value_complaint",
+      "prompt_template_label": "Value-related complaints",
       "chunk_ids_used": [
         "B071YYMZ19_4_0",
-        "B00FYZJPAM_28_0",
         "B007O0GQPC_27_0",
-        "B071YYMZ19_2_0",
-        "B005C2NA4E_39_0"
+        "B071WKSX1F_10_0",
+        "B07NQN58ZC_35_0",
+        "B071YYMZ19_2_0"
       ],
       "llm_backend": "ollama",
       "llm_model": "llama3",
       "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
       "request_task_type": "general_qa",
-      "request_use_rerank": false,
-      "rerank_reason": "selective:default_off:family=unknown",
+      "request_use_rerank": true,
+      "rerank_reason": "selective:family_on:value_complaint",
       "strategy_reason": "default_vector",
       "filters": {}
     },
@@ -228,7 +228,7 @@
       "answer_eval_id": "ae010",
       "query": "Any mentions of texture, smell, or consistency issues?",
       "query_family": "exact_issue_lookup",
-      "answer": "Here's the answer:\n\nTexture and Consistency Issues:\n\n* Chunk 3 | id=B071YYMZ19_7_0: No specific texture or consistency issue mentioned.\n* Chunk 4 | id=B071YYMZ19_1_0: No mention of texture or consistency.\n\nSmell:\n* Chunk 1 | id=B07WDL82Z4_18_0: The reviewer finds the smell \"very interesting\" and compares it to citrus, fennel scent, or dried bael fruit.\n* Chunk 2 | id=B07WDL82Z4_19_0: No specific mention of smell.\n* Chunk 3 | id=B071YYMZ19_7_0: The reviewer mentions that the deodorant \"smelled great!\"\n* Chunk 5 | id=B007O0GQPC_25_0: No mention of smell.\n\nNo other mentions of texture, smell, or consistency issues in the retrieved excerpts.",
+      "answer": "Here's what the excerpts say about texture, smell, and consistency issues:\n\n**Texture Issues:**\n\n* Chunk 3 mentions discomfort starting after 10-15 minutes of use, followed by a burning ache that persisted for days. This is not specifically attributed to the deodorant's texture, but rather its overall performance.\n* No other chunks mention texture issues.\n\n**Smell:**\n\n* Chunk 1 describes an interesting smell as \"sort of citrus and fennel scent or somewhat like dried bael fruit.\"\n* Chunk 2 mentions enjoying the smell and coverage.\n* Chunk 3 notes that the deodorant smelled great, but this is overshadowed by the reviewer's discomfort experience.\n\n**Consistency Issues:**\n\n* Chunk 5 mentions that the soap (not specifically the deodorant) didn't have a lot of odor, which is a plus for one user. No consistency issues are mentioned in any chunk.\n\nInsufficient evidence in the retrieved excerpts to address other possible issues like defects or authenticity concerns.",
       "prompt_template_id": "family_exact_issue_lookup",
       "prompt_template_label": "Exact issue lookup",
       "chunk_ids_used": [
@@ -251,7 +251,7 @@
       "answer_eval_id": "ae011",
       "query": "What do reviewers say about low-rated experiences in general?",
       "query_family": "rating_scoped_summary",
-      "answer": "### Irritation / skin\n* Reviewers experienced irritation or discomfort on their skin with this product. (Chunk 4)\n\t+ Chunk 4: \"I have sensitive skin, especially after shaving... After going to the dermatologist because I thought I had a serious rash with a burning sensation, we figured it was this deodorant.\"\n\n### Difficulty using\n* Some reviewers found it difficult or impossible to open the product. (Chunk 3)\n\t+ Chunk 3: \"IMPOSSIBLE TO OPEN!! would have been nice to try it.\"\n\n### Counterfeit concern\n* At least one reviewer purchased a counterfeit version of the product from Amazon, which had adverse effects. (Chunk 2)\n\t+ Chunk 2: \"Dont buy this from amazon!!!! I never write reviews but felt others should know this. I've been using this deodorant for a while and purchased it this time from amazon. It isn’t the real product and the charcoal chunks will tear your armpits up.\"",
+      "answer": "### Negative Experiences with Product\n\n* **Irritation / skin**: Some users experienced irritation or discomfort when using the product. For example, one reviewer mentioned that the charcoal chunks can tear their armpits up (Chunk 2). Another reviewer experienced a burning sensation and thought they had a serious rash, but it was eventually attributed to applying the deodorant after shaving (Chunk 4).\n* **Difficulty opening or using**: One user found the product impossible to open, which would have been nice to try (Chunk 3).\n* **Ineffective performance**: Some users noted that the product did not perform well in certain situations. For instance, it was not effective during exercise or in hot summer weather (Chunk 4). Additionally, one reviewer mentioned that it stained gray and oily, making it unsuitable for wearing with thin, light, or nice clothes (Chunk 4).\n* **Disappointment**: Some users were disappointed with the product's performance. One reviewer stated that they disliked most of the flavors they tried and considered the price point too high for a product they didn't enjoy (Chunk 1).",
       "prompt_template_id": "family_rating_scoped_summary",
       "prompt_template_label": "Rating-scoped summary",
       "chunk_ids_used": [
@@ -278,9 +278,9 @@
       "answer_eval_id": "ae012",
       "query": "Briefly: what problems should a buyer watch out for?",
       "query_family": "abstract_complaint_summary",
-      "answer": "### Potential Problems to Watch Out For\n\n* **Misrepresentation**: According to Chunk 2, buyers may receive an imitation product instead of the real deal when purchasing from Amazon. This could result in subpar quality or even allergic reactions.\n\t+ Evidence: [Chunk 2 | id=B071YYMZ19_4_0]\n* **Quality issues**: Some users may experience skin irritation or discomfort due to the product's ingredients, as mentioned in Chunk 5 (baking soda allergy) and Chunk 2 (charcoal chunks tearing armpits).\n\t+ Evidence: [Chunk 2 | id=B071YYMZ19_4_0], [Chunk 5 | id=B07WDL82Z4_20_0]\n* **Difficulty opening**: Some buyers may struggle with opening the product, as described in Chunk 1.\n\t+ Evidence: [Chunk 1 | id=B07NQN58ZC_29_0]\n\nNote: These potential problems are based solely on the provided excerpts and do not represent any assumed or invented issues.",
-      "prompt_template_id": "family_value_complaint",
-      "prompt_template_label": "Value-related complaints",
+      "answer": "### Pitfalls and Risks\n\n* **Fake or counterfeited products**: Be cautious when purchasing from third-party sellers, as some reviewers have experienced receiving fake or low-quality products. [Chunk 2]\n* **Incompatibility with skin type**: One reviewer mentioned that the charcoal chunks in this deodorant can tear up armpits, so be aware of potential skin irritation if you're sensitive to these ingredients. [Chunk 2]",
+      "prompt_template_id": "family_buyer_risk_issues",
+      "prompt_template_label": "Buyer risk / pitfalls",
       "chunk_ids_used": [
         "B07NQN58ZC_29_0",
         "B071YYMZ19_4_0",
@@ -293,7 +293,7 @@
       "answer_trace_path": "/Users/ppavuluri/Desktop/retreival_systems/llm-retrieval-systems/artifacts/answer_traces/answer_eval_runs.jsonl",
       "request_task_type": "complaint_summary",
       "request_use_rerank": true,
-      "rerank_reason": "selective:family_on:value_complaint",
+      "rerank_reason": "selective:family_on:buyer_risk_issues",
       "strategy_reason": "complaint_task_light_hybrid",
       "filters": {}
     }

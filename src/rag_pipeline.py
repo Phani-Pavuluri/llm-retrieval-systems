@@ -14,6 +14,7 @@ from src.rerank_policy import apply_selective_rerank_policy
 from src.reranker import CrossEncoderReranker, effective_rerank, effective_rerank_model
 from src.retrieval_request import RetrievalRequest
 from src.retrieval_strategy import apply_strategy_to_request
+from src.explanation_builder import build_explanation_payload
 from src.retrieval_with_rerank import retrieve_with_optional_rerank
 from src.retriever import Retriever
 
@@ -62,11 +63,28 @@ class RAGPipeline:
         rerank_model: str | None = None,
         selective_rerank: bool | None = None,
         trace_extra: dict | None = None,
+        *,
+        explain: bool = False,
+        llm_backend: str | None = None,
+        llm_model: str | None = None,
+        filter_overrides: dict[str, Any] | None = None,
+        query_family_override: str | None = None,
+        output_style_hints: dict[str, Any] | None = None,
+        reset_filters: bool = False,
     ) -> dict:
         if use_parser:
             request = self.query_parser.parse(query, top_k=k)
         else:
             request = RetrievalRequest.from_raw(query, top_k=k)
+
+        if reset_filters:
+            request.filters = dict(filter_overrides or {})
+        elif filter_overrides:
+            merged = dict(request.filters or {})
+            merged.update(filter_overrides)
+            request.filters = merged
+        if query_family_override and str(query_family_override).strip():
+            request.query_family = str(query_family_override).strip()
 
         if use_hybrid is not None:
             request.use_hybrid = use_hybrid
@@ -91,10 +109,28 @@ class RAGPipeline:
         retrieved = self._retrieve_chunks(request, trace_extra=trace_extra)
 
         original = request.original_query or query
-        built = build_answer_prompt(request, original, retrieved)
-        answer = self.llm.generate(built.prompt)
+        built = build_answer_prompt(
+            request,
+            original,
+            retrieved,
+            output_style_hints=output_style_hints,
+        )
 
-        llm_model = getattr(self.llm, "model_name", None) or self._llm_model_name
+        if llm_backend is not None or llm_model is not None:
+            eb = (
+                llm_backend.strip().lower()
+                if llm_backend is not None
+                else str(self._llm_backend).strip().lower()
+            )
+            gen_llm = get_llm(eb, llm_model)
+            eff_backend = eb
+        else:
+            gen_llm = self.llm
+            eff_backend = str(self._llm_backend).strip().lower()
+
+        answer = gen_llm.generate(built.prompt)
+
+        llm_model = getattr(gen_llm, "model_name", None) or self._llm_model_name
         routing = describe_prompt_routing(request)
         trace_row: dict[str, Any] = {
             "query": original,
@@ -103,7 +139,7 @@ class RAGPipeline:
             "prompt_template_label": built.template_label,
             "prompt_routing": routing,
             "chunk_ids_used": built.chunk_ids,
-            "llm_backend": self._llm_backend,
+            "llm_backend": eff_backend,
             "llm_model": llm_model,
             "answer": answer,
             "task_type": request.task_type,
@@ -129,9 +165,19 @@ class RAGPipeline:
             "prompt_template_id": built.template_id,
             "prompt_template_label": built.template_label,
             "chunk_ids_used": built.chunk_ids,
-            "llm_backend": self._llm_backend,
+            "llm_backend": eff_backend,
             "llm_model": llm_model,
         }
         if answer_trace_path is not None:
             out["answer_trace_path"] = str(answer_trace_path)
+        if explain:
+            diag = dict(self.retriever.last_retrieval_diagnostics or {})
+            out["explanation"] = build_explanation_payload(
+                request=request,
+                retrieved=retrieved,
+                answer=answer,
+                chunk_ids_used=built.chunk_ids,
+                prompt_template_id=built.template_id,
+                diagnostics=diag,
+            )
         return out

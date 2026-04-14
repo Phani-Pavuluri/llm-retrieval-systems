@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -103,6 +104,11 @@ def main() -> None:
         default=None,
         help="With --answer-trace: JSONL path (default: artifacts/answer_traces/answers.jsonl)",
     )
+    parser.add_argument(
+        "--explain",
+        action="store_true",
+        help="Structured explanation: evidence (chunks in LLM context), reasoning_summary, confidence — not model attribution. No extra LLM call",
+    )
     args = parser.parse_args()
 
     from src.rag_pipeline import RAGPipeline
@@ -153,6 +159,7 @@ def main() -> None:
         rerank_model=args.rerank_model,
         selective_rerank=selective_rerank,
         trace_extra=trace_extra,
+        explain=args.explain,
     )
 
     print("\nQUERY:")
@@ -216,6 +223,52 @@ def main() -> None:
 
     print("\nANSWER:")
     print(result["answer"])
+
+    if args.explain and result.get("explanation"):
+        ex = result["explanation"]
+        print("\n--- EXPLAIN (Phase 5.1) ---")
+        rs = ex.get("reasoning_summary") or {}
+        print("\nWHY THIS ANSWER (system summary):")
+        print(rs.get("summary_line", ""))
+        print(
+            f"  query_family={rs.get('query_family')}  retrieval_mode={rs.get('retrieval_mode')}  "
+            f"rerank_applied={rs.get('rerank_applied')}  strategy={rs.get('strategy_reason')!r}"
+        )
+        if rs.get("filters_applied"):
+            print(f"  filters={rs.get('filters_applied')}")
+        if rs.get("rating_scope"):
+            print(f"  rating_scope={rs.get('rating_scope')}")
+        print(f"  prompt_template={rs.get('prompt_template_id')}")
+        cf = ex.get("confidence") or {}
+        print(
+            f"\nCONFIDENCE: {cf.get('confidence_label')} (score={cf.get('confidence_score')}, heuristic)"
+        )
+        for r in cf.get("confidence_reasons") or []:
+            print(f"  - {r}")
+        print("\nEVIDENCE PROVIDED TO THE MODEL (context window; not which chunks the model relied on most):")
+        for i, ev in enumerate(ex.get("evidence") or [], start=1):
+            cid = ev.get("chunk_id", "")
+            sid = ev.get("source_id") or "—"
+            print(f"  {i}. {cid} (source={sid})")
+            rs_ = []
+            if ev.get("rerank_score") is not None:
+                rs_.append(f"rerank_score={ev['rerank_score']:.4f}")
+            if ev.get("retrieval_score") is not None:
+                rs_.append(f"retrieval_score={ev['retrieval_score']:.4f}")
+            elif ev.get("score") is not None:
+                rs_.append(f"score={ev['score']:.4f}")
+            if ev.get("semantic_score") is not None:
+                rs_.append(f"semantic={ev['semantic_score']:.4f}")
+            if ev.get("keyword_score") is not None:
+                rs_.append(f"keyword={ev['keyword_score']:.4f}")
+            if rs_:
+                print("     " + "  ".join(rs_))
+            txt = (ev.get("chunk_text") or "")[:220].replace("\n", " ")
+            if len(ev.get("chunk_text") or "") > 220:
+                txt += "…"
+            print(f"     {txt}")
+        print("\n(JSON)")
+        print(json.dumps(ex, indent=2, ensure_ascii=False, default=str))
 
     print("\nRETRIEVED CHUNKS:")
     preferred = [

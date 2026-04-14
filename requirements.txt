@@ -11,3 +11,10 @@ openai
 
 # Loads `.env` into the environment before `src.config` reads OPENAI_API_KEY
 python-dotenv
+
+# Phase 5.2 HTTP API
+fastapi
+uvicorn[standard]
+
+# Phase 5.3 chat UI (thin client to API)
+streamlit

@@ -94,6 +94,19 @@ class TestBuildPrompt(unittest.TestCase):
         self.assertIn("review_rating equal to 1", b.prompt)
         self.assertIn("ONLY include negative feedback", b.prompt)
 
+    def test_output_style_hints_block(self) -> None:
+        r = RetrievalRequest(query_text="q", top_k=5, task_type="general_qa")
+        df = pd.DataFrame({"chunk_id": ["a"], "text": ["t"]})
+        b = build_answer_prompt(
+            r,
+            "Same question",
+            df,
+            output_style_hints={"brevity": "short", "max_issues": 3},
+        )
+        self.assertIn("Output constraints", b.prompt)
+        self.assertIn("concise", b.prompt.lower())
+        self.assertIn("at most 3", b.prompt)
+
     def test_symptom_template_has_negation_rules(self) -> None:
         r = RetrievalRequest(
             query_text="q",
