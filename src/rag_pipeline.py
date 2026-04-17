@@ -15,6 +15,7 @@ from src.reranker import CrossEncoderReranker, effective_rerank, effective_reran
 from src.retrieval_request import RetrievalRequest
 from src.retrieval_strategy import apply_strategy_to_request
 from src.explanation_builder import build_explanation_payload
+from src.evidence_negation_filter import filter_absence_focused_excerpts
 from src.retrieval_with_rerank import retrieve_with_optional_rerank
 from src.retriever import Retriever
 
@@ -109,10 +110,21 @@ class RAGPipeline:
         retrieved = self._retrieve_chunks(request, trace_extra=trace_extra)
 
         original = request.original_query or query
+        retrieved_for_prompt, absence_filter_stats = filter_absence_focused_excerpts(
+            retrieved,
+            user_question=original,
+        )
+        trace_extra_effective = trace_extra
+        if trace_extra_effective is not None and isinstance(trace_extra_effective, dict):
+            trace_extra_effective = {
+                **trace_extra_effective,
+                "absence_excerpt_filter": absence_filter_stats,
+            }
+
         built = build_answer_prompt(
             request,
             original,
-            retrieved,
+            retrieved_for_prompt,
             output_style_hints=output_style_hints,
         )
 
@@ -145,9 +157,9 @@ class RAGPipeline:
             "task_type": request.task_type,
             "strategy_reason": request.strategy_reason,
         }
-        if trace_extra:
+        if trace_extra_effective:
             _skip = frozenset({"trace_out", "answer_trace_out"})
-            te = {k: v for k, v in trace_extra.items() if k not in _skip}
+            te = {k: v for k, v in trace_extra_effective.items() if k not in _skip}
             trace_row["trace_extra"] = te
 
         answer_trace_path: Path | None = None
@@ -172,9 +184,10 @@ class RAGPipeline:
             out["answer_trace_path"] = str(answer_trace_path)
         if explain:
             diag = dict(self.retriever.last_retrieval_diagnostics or {})
+            diag["absence_excerpt_filter"] = absence_filter_stats
             out["explanation"] = build_explanation_payload(
                 request=request,
-                retrieved=retrieved,
+                retrieved=retrieved_for_prompt,
                 answer=answer,
                 chunk_ids_used=built.chunk_ids,
                 prompt_template_id=built.template_id,
