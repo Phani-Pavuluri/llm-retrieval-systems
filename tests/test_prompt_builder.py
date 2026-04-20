@@ -61,7 +61,26 @@ class TestFormatEvidence(unittest.TestCase):
         )
         ctx, ids = format_evidence_block(df)
         self.assertEqual(ids, ["c1", "c2"])
-        self.assertIn("[Chunk 1 | id=c1]", ctx)
+        self.assertIn("[Chunk 1 | chunk_id=c1]", ctx)
+
+    def test_metadata_in_excerpt_headers(self) -> None:
+        df = pd.DataFrame(
+            {
+                "chunk_id": ["B00ABCDEF_0_0"],
+                "text": ["Great soap."],
+                "asin": ["B00ABCDEF"],
+                "brand": ["Acme"],
+                "review_title": ["Love it"],
+                "category": ["Beauty"],
+                "sub_category": ["Soap"],
+            }
+        )
+        ctx, _ids = format_evidence_block(df)
+        self.assertIn("asin=B00ABCDEF", ctx)
+        self.assertIn("brand=Acme", ctx)
+        self.assertIn("review_title=Love it", ctx)
+        self.assertIn("category=Beauty", ctx)
+        self.assertIn("sub_category=Soap", ctx)
 
 
 class TestBuildPrompt(unittest.TestCase):

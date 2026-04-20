@@ -75,9 +75,11 @@ Clients should be told explicitly (summary + field descriptions):
 
 ---
 
-## Phase 5.4 — Thin conversational layer **(planned)**
+## Phase 5.4 — Thin conversational layer **(implemented)**
 
 **Intent:** Better **follow-up UX** and **continuity** without turning the backend into a chat database or an autonomous agent.
+
+**Shipped:** **`conversation_context`** on **`POST /query`**, **`src/conversation_state.py`**, **`src/followup_resolver.py`**, resolver wiring in **`src/api.py`** / **`src/rag_pipeline.py`**, Streamlit client payloads — see **`SYSTEM_EVOLUTION.md`** §12.4 and **`API_CONTRACT.md`** (Phase 5.4).
 
 ### What 5.4 *is*
 
@@ -175,18 +177,18 @@ If none of the above fire **and** follow-up heuristics match, then **reuse** pri
 | **Ask-for-explanation** | “Why?”, “Which chunks support that?”, “How confident?” |
 | **Aspect shift (same topic)** | “What about value complaints?”, “Buyer risks?”, “Any symptom mentions?” — aligned with existing **`query_family`** taxonomy |
 
-### Likely code / API / UI touchpoints
+### Code / API / UI touchpoints (shipped)
 
 | Area | Role |
 |------|------|
-| **`src/conversation_state.py`** (new) | Typed **turn / session** state; serializable for API body. |
-| **`src/followup_resolver.py`** (new) | Detect follow-up, merge with prior state, emit **resolved query + filters**. |
-| **`src/api.py`** | Optional **`conversation_context`** / `conversation_id` on **`POST /query`**; pass resolved text into pipeline. |
-| **`ui/chat_ui.py`** | Keep **recent turns** in `st.session_state`, send **context payload** with each request. |
+| **`src/conversation_state.py`** | Typed **turn / session** state; serializable for API body. |
+| **`src/followup_resolver.py`** | Detect follow-up, merge with prior state, emit **resolved query + filters**. |
+| **`src/api.py`** | Optional **`conversation_context`** on **`POST /query`**; pass resolved text into pipeline. |
+| **`ui/chat_ui.py`** | Keeps **recent turns** in `st.session_state`, sends **context payload** with each request. |
 
 ### API additivity (implementation gate)
 
-When shipping 5.4:
+When using 5.4:
 
 - **`POST /query` without conversation fields** must behave **exactly** as today (no required new keys).  
 - **`conversation_context`** (and any `conversation_id`) remain **optional**.  
@@ -203,7 +205,19 @@ After 5.4, a single session should handle **without retyping the whole question*
 
 ### After 5.4
 
-**Phase 6.1** — first real **analytics / ML tool** behind the same API—progression: answer well → explain well → **converse briefly** → then **analyze**.
+**Phase 5.5** (optional) — LLM **retrieval query planner**; then **Phase 6.1** — first real **analytics / ML tool** behind the same API—progression: answer well → explain well → **converse briefly** → **optional planner-tuned retrieval** → then **analyze**.
+
+---
+
+## Phase 5.5 — LLM query planner (retrieval) **(implemented, opt-in)**
+
+**Goal:** Improve **retrieval request shape** (paraphrase for embed / keyword overlap, optional **`review_rating`**, optional allowlisted **`query_family`**) via one **small structured LLM JSON** call, **validated** before merge—without changing retriever/rerank internals.
+
+- **Request:** **`query_planner`** on **`POST /query`** (or server default **`QUERY_PLANNER_DEFAULT`** in **`src/config.py`** — currently **`false`**).  
+- **UI:** Streamlit sidebar **“LLM query planner (retrieval)”** sends **`query_planner`: true** when checked.  
+- **Docs / code:** **`API_CONTRACT.md`** (Phase 5.5), **`SYSTEM_EVOLUTION.md`** §12.5, **`src/query_planner.py`**.
+
+**Product stance:** Default **off** for predictable behavior, tests, and cost; turn **on** when negative/low-rating phrasing and parser gaps justify the extra LLM call.
 
 ---
 

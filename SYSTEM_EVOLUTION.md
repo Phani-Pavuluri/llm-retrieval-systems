@@ -307,8 +307,22 @@ Concrete patterns (qualitative, pre-4.4 numeric table): answers **listed** evide
 
 ### Changes made
 
-- **`src/prompt_builder.py`:** **task / family** templates (abstract complaints, value, exact issue, rating-scoped, general); **grounding** block + evidence block with `[Chunk n | id=…]`.
+- **`src/prompt_builder.py`:** **task / family** templates (abstract complaints, value, exact issue, rating-scoped, general); **grounding** block + evidence block with numbered chunk headers.
 - **`src/answer_trace.py`** + pipeline hooks: **`prompt_template_id`**, **`chunk_ids_used`**, backend/model in JSONL for post-hoc labeling.
+
+#### Update (2026-04) — deterministic product metadata in excerpt headers
+
+**Problem:** Review excerpts often omit a crisp “listing title” in the free text, so the model answers with generic “this product / the soap” language even when structured identifiers exist on the chunk row.
+
+**Change:** `format_evidence_block()` now prefixes each excerpt with stable metadata copied from the retrieval dataframe when present, e.g. `asin`, `brand`, `review_title` (review headline), `category`, `sub_category`, plus `chunk_id` (and ASIN may be parsed from `chunk_id` when the `asin` column is missing). Grounding rules explicitly say these header fields are **authoritative** when present.
+
+**Operational note:** requires restarting the **API** process to pick up prompt changes; **no** chunk rebuild is required for this specific prompt-only change as long as those columns already exist in `data/processed/review_chunks.csv`.
+
+#### Update (2026-04) — post-retrieval absence / negation excerpt shaping
+
+**Problem:** Health-ish questions can retrieve “no rash / no irritation” style passages that are topically similar but not useful positive evidence for “issues” framing.
+
+**Change:** `src/evidence_negation_filter.py` filters primarily absence-focused rows **after** retrieval / rerank and **before** prompt assembly (and explain-mode evidence reflects the same filtered context). This is intentionally **not** a retriever/reranker change.
 
 ### Why these changes should work
 
@@ -554,7 +568,7 @@ Consolidated patterns that recur across §3–§10 (no new metrics here).
 
 **One-line purpose:** Make the frozen core (through **4.5**) **usable** and **inspectable** via API and UI—**without** moving retrieval, rerank, or prompt logic into clients.
 
-**Status:** **5.1**, **5.2**, and **5.3** implemented in repo; **5.4** planned.
+**Status:** **5.1**–**5.5** implemented in repo (**5.5** = optional LLM retrieval query planner).
 
 ### 12.1 Phase 5.1 — Explainable answers
 
@@ -702,7 +716,7 @@ No auth, no persistence, no streaming; history is **presentational** only.
 
 ---
 
-### 12.4 Phase 5.4 — Thin conversational layer (planned)
+### 12.4 Phase 5.4 — Thin conversational layer (shipped)
 
 **One-line purpose:** Add a **conversation context builder + follow-up resolver** in front of the existing pipeline so follow-ups reuse **structured** prior state—**without** stateful retrieval, long-term memory, or LLM-inferred history.
 
@@ -739,16 +753,20 @@ Without a resolver, the model either **guesses** from a single ambiguous string 
 
 #### Changes made
 
-None shipped yet.
-
-#### Planned components (names indicative)
+Shipped modules (rule-first; stateless per request):
 
 | Module | Responsibility |
 |--------|----------------|
-| **`src/conversation_state.py`** | Dataclass(es): turn list, **last resolved query text**, last **`query_family`**, last **`filters`**, last **answer** (or summary), last **chunk_ids**, last **`explain`** flag. |
-| **`src/followup_resolver.py`** | **Detect** follow-up (short text, pronouns, cue phrases like “what about”, “only”, “more briefly”, “why”); **merge** with `ConversationState`; **emit** `resolved_query: str` and optional **filter deltas**; unit-testable without Streamlit. |
-| **`src/api.py`** | Optional request fields, e.g. **`conversation_context`** JSON and/or **`conversation_id`** if server session is added later. |
-| **`ui/chat_ui.py`** | Populate context from `st.session_state`, display **resolved query** in an expander when explain/debug is on. |
+| **`src/conversation_state.py`** | Pydantic models for a **bounded** client-supplied `conversation_context` (`TurnRecord` fields include `user_query_raw`, `resolved_query`, `query_family`, `filters`, `answer_summary`, `chunk_ids`, `explain_used`). |
+| **`src/followup_resolver.py`** | Heuristic follow-up detection + `resolve_followup()` returning **`resolved_query`**, optional **`filter_overrides`**, optional **`query_family_override`**, optional **`output_style_hints`**, optional **`explain_force`**, and **`reset_filters`** for aspect pivots. |
+| **`src/api.py`** | Optional **`conversation_context`** on `POST /query`; merges resolver outputs into `RAGPipeline.answer()`; response **`metadata`** includes follow-up debug fields; explain mode adds **`conversation_transparency`**. |
+| **`src/rag_pipeline.py`** | Applies resolver overrides **after** `QueryParser.parse()` and **before** strategy/rerank policy; passes structured **`output_style_hints`** into `build_answer_prompt()`. |
+| **`ui/chat_ui.py` + `ui/chat_helpers.py`** | Client stores turns locally, sends bounded context, surfaces **resolved query** when `metadata.is_followup` is true. |
+
+#### Tests
+
+- `tests/test_followup_resolver.py` — follow-up detection + resolver branches + non-follow-up behavior.  
+- `tests/test_api.py` — additive API wiring (conversation context → pipeline kwargs + explain transparency).
 
 #### Follow-up classes (minimal v1 scope)
 
@@ -762,7 +780,7 @@ None shipped yet.
 If one utterance matches multiple classes (e.g. scope + output), apply **deterministic** ordering so behavior does not flap:
 
 1. **Reset / cold-start** conditions (explicit user reset, stale session policy, or “new topic” guard — see **PRODUCT_ROADMAP.md**) — evaluated **first**; if fired, **clear** prior carry-forward.  
-2. **Scope refinement** — merge **filters** / topic scope into `resolved_query_text` **before** other merges.  
+2. **Scope refinement** — merge **filters** / topic scope into the **resolved natural-language query string** (`resolved_query`) **before** other merges.  
 3. **Aspect shift** — adjust `query_family` / template intent against the **post-scope** state.  
 4. **Ask-for-explanation** — prefer **reuse last evidence + answer** when scope **unchanged**; if scope changed in (2), **run retrieval** on new scope then attach explanation.  
 5. **Output refinement** — apply **last** (prompt / template “shape” hints), so “shorter” does not override one-star filter intent.
@@ -775,20 +793,22 @@ Mirror product spec: **explicit reset**; **clearly new topic** (no follow-up cue
 
 #### Bounded turn summary (per-turn record)
 
-Do **not** store narrative “what we talked about” prose as the canonical state. Store a **fixed schema** (see **PRODUCT_ROADMAP.md** — *Minimal turn summary*): at minimum **`user_query_raw`**, **`resolved_query_text`**, **`query_family`**, **`filters`**, **`answer_summary`** (length-capped or hash-stable), **`evidence_chunk_ids`**, **`explain_used`**.
+Do **not** store narrative “what we talked about” prose as the canonical state. Store a **fixed schema** (see **PRODUCT_ROADMAP.md** — *Minimal turn summary*): at minimum **`user_query_raw`**, **`resolved_query`**, **`query_family`**, **`filters`**, **`answer_summary`** (length-capped or hash-stable), **`chunk_ids`**, **`explain_used`**.
 
 #### API additivity
 
-Shipped **`POST /query`** must remain valid **without** new fields. **`conversation_context`** optional; response fields for resolution (`resolved_query_text`, `followup_resolution_applied`, etc.) **optional** for backward-compatible clients.
+Shipped **`POST /query`** must remain valid **without** new fields. **`conversation_context`** is optional; clients that omit it behave like Phase **5.2**. Response **`metadata`** includes additive keys (e.g. **`user_query`**, **`resolved_query`**, **`is_followup`**, **`followup_type`**, **`reused_fields`**, **`filters_applied`**, **`chunk_ids_used`**, **`explain_used`**) so older clients can ignore unknown keys.
 
 #### Response transparency (trust)
 
-When resolution runs, expose in **`metadata`** and/or **`explanation`**-adjacent fields (exact keys TBD in **API_CONTRACT.md** when shipped):
+When **`explain=true`**, responses include **`explanation.conversation_transparency`** with:
 
-- **Original** user text for the turn.  
-- **`resolved_query_text`** (what the pipeline actually ran).  
-- **Flag:** follow-up resolver applied.  
-- **Which prior fields** were reused (`filters`, `query_family`, chunk ids, etc.).
+- **`original_query`** (raw user text for the HTTP turn)  
+- **`resolved_query`** (string passed into `RAGPipeline.answer()` after follow-up resolution)  
+- **`reused_fields`** (what the resolver merged)  
+- **`prior_turn`** (bounded snapshot from the client-supplied context, if any)
+
+The Streamlit UI also surfaces **`metadata.resolved_query`** prominently when **`metadata.is_followup`** is true.
 
 #### Why this design should work
 
@@ -796,7 +816,7 @@ Rule-based merge keeps behavior **auditable**; the parser and retriever still se
 
 #### Results
 
-N/A until implemented.
+**Qualitative:** short follow-ups (“one-star”, “shorter”, “why”, “what about value”) become **auditable** via `resolved_query` + `reused_fields` without making retrieval stateful.
 
 #### Tradeoffs / limitations
 
@@ -817,8 +837,56 @@ One session should handle without full re-prompting: **one-star follow-up**, **b
 #### Artifacts / evidence
 
 - **PRODUCT_ROADMAP.md** — Phase 5.4 product spec.  
-- **API_CONTRACT.md** — *Planned: Phase 5.4* request/response notes.  
-- Future: `tests/test_followup_resolver.py`, OpenAPI diff on **`POST /query`**.
+- **API_CONTRACT.md** — `POST /query` contract notes (includes shipped conversation fields).  
+- `src/conversation_state.py`, `src/followup_resolver.py`, `src/api.py`, `src/rag_pipeline.py`, `ui/chat_ui.py`, `ui/chat_helpers.py`  
+- `tests/test_followup_resolver.py`, `tests/test_api.py`
+
+---
+
+### 12.5 Phase 5.5 — LLM query planner (retrieval, optional)
+
+**One-line purpose:** Add an **optional, validated LLM step** after `QueryParser.parse()` (and Phase **5.4** merges) to improve **retrieval-shaped** fields—paraphrased **`query_text`**, optional **`review_rating`** filter, optional allowlisted **`query_family`**—without moving logic into the retriever or reranker.
+
+#### Context / starting point
+
+Rule-based **`QueryParser`** covers many phrases but misses variants; questions about **worst / negative / low satisfaction** evidence sometimes returned **mostly positive** chunks because rating intent never became a **metadata filter** or retrieval string stayed misaligned with embedding recall.
+
+#### Problem observed
+
+Heuristic keyword lists do not scale to all phrasings; product preference was to **avoid** only growing parser maps and instead add a **small structured planner** whose output is **allowlisted and validated**.
+
+#### Diagnosis
+
+**Evidence:** RAG answers can look “all positive” when the pool is not rating-scoped. Root cause split: **filter not set** and/or **query string not optimized** for dense/lexical retrieval—not necessarily the final LLM answer step.
+
+#### Changes made
+
+- **`src/query_planner.py`:** `apply_llm_query_plan()` calls the configured **`BaseLLM`**, parses JSON (tolerates fenced blocks), validates keys (`retrieval_query_text`, `review_rating`, `query_family`, `needs_low_rating_evidence`); merges into **`RetrievalRequest`** in place. `maybe_apply_query_planner()` gates on **`enabled`**, skips when rules already extracted **`review_rating`**, skips when **`filter_overrides` / `reset_filters`** were used **and** merged **`filters`** already include **`review_rating`** (**`skipped_followup_filters_present`**) so **5.4** resolver scope is not overridden.  
+- **`src/rag_pipeline.py`:** runs the planner after parse + overrides, before strategy / rerank policy + retrieval; attaches **`query_plan`** to pipeline output and explain diagnostics when relevant.  
+- **`src/config.py`:** **`QUERY_PLANNER_DEFAULT`** (default **`false`**) for tests and backward-compatible API behavior when the request omits **`query_planner`**.  
+- **`src/api.py`:** request field **`query_planner`**; **`metadata.query_plan`** and **`metadata.retrieval_query_text`**.  
+- **`ui/chat_ui.py` / `ui/chat_helpers.py`:** opt-in checkbox; JSON body includes **`query_planner`: true** only when enabled.  
+- **`tests/test_query_planner.py`**, **`tests/test_chat_helpers.py`**.
+
+#### Why these changes should work
+
+The planner **cannot** bypass validation: unknown **`query_family`** values are dropped; **`review_rating`** must be a scalar 1–5 or bounded **`{min,max}`**; **`needs_low_rating_evidence`** can only add **`review_rating`** **`max: 3`** when no explicit rating was set—reducing silent “happy pool” retrieval for clearly negative-scoped questions.
+
+#### Tradeoffs / limitations
+
+- **Extra LLM call** (cost + latency) whenever the feature is on and not skipped.  
+- **Default off** so existing deployments and unit tests do not change behavior until **`query_planner: true`** or **`QUERY_PLANNER_DEFAULT`** is flipped.  
+- Planner quality depends on **prompt + model**; mis-plans are possible—operators should use **`metadata.query_plan`** and traces for debugging.
+
+#### Key takeaway
+
+- **5.5** complements **Phase 1** parsing; it does **not** replace it.  
+- **Opt-in** preserves predictable baselines; enable when the extra call and behavior shift are acceptable.
+
+#### Artifacts / evidence
+
+- **`API_CONTRACT.md`** — Phase **5.5** request/response notes.  
+- `src/query_planner.py`, `tests/test_query_planner.py`
 
 ---
 
@@ -868,7 +936,7 @@ Scope creep risk if tools are not bounded; evaluation must extend to **tool** ou
 ### Layer separation (closing note)
 
 - **Phases 1–4.5** — Core **intelligence quality**: parsing, retrieval, hybrid/rerank, selective policy, prompts, routing, manual eval.  
-- **Phase 5** — **Productization** and **explainability** (API, UI, planned conversation) on top of that core.  
+- **Phase 5** — **Productization** and **explainability** (API, UI, bounded conversational follow-ups) on top of that core.  
 - **Phase 6** — **ML / analytics extensions** (tool-backed computation) composed with retrieval.
 
 ---

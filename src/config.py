@@ -31,6 +31,10 @@ LLM_BACKEND = "ollama"
 OPENAI_MODEL = "gpt-4o-mini"
 OLLAMA_MODEL = "llama3"
 
+# Optional LLM-assisted retrieval planning (JSON plan validated before retrieval).
+# Prefer enabling per-request via API (`query_planner`); keep default off for tests/back-compat.
+QUERY_PLANNER_DEFAULT = False
+
 # Optional hybrid retrieval: lexical overlap on vector candidates, then weighted fuse.
 HYBRID_RETRIEVAL = False
 HYBRID_ALPHA = 0.7  # weight on semantic (FAISS) score after batch min-max norm

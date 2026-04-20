@@ -84,6 +84,12 @@ Whenever you need the HTTP contract (`API_CONTRACT.md`), local demos against **`
 PYTHONPATH=. streamlit run ui/chat_ui.py
 ```
 
+Equivalent launcher (defaults Streamlit to **`http://127.0.0.1:8501`**):
+
+```bash
+PYTHONPATH=. python scripts/run_chat_ui.py
+```
+
 **What it does**  
 Starts the Phase 5.3 Streamlit app (**`ui/chat_ui.py`**). It only calls **`GET /health`** and **`POST /query`**—no retrieval or prompt logic in the UI layer.
 
@@ -93,6 +99,7 @@ Gives you:
 - answer display,
 - optional explain mode (evidence, reasoning summary, confidence),
 - lightweight metadata and clear API errors,
+- optional **LLM query planner** toggle (sidebar) that sets **`query_planner`** on **`POST /query`** when enabled,
 
 without touching the core pipeline code paths beyond HTTP.
 

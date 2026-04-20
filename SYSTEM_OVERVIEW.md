@@ -8,7 +8,7 @@ Answer user questions **only from retrieved review chunks**, with observable **r
 
 | Layer | Role | Status |
 |-------|------|--------|
-| **Product / access** | HTTP API, chat UI, thin conversation — thin clients over the backend | **5.1** explainability; **5.2** API; **5.3** Streamlit (**`API_CONTRACT.md`**); **5.4** thin follow-up layer **planned** (**`PRODUCT_ROADMAP.md`**, **`SYSTEM_EVOLUTION.md`** §12.4) |
+| **Product / access** | HTTP API, chat UI, thin conversation — thin clients over the backend | **5.1** explainability; **5.2** API; **5.3** Streamlit (**`API_CONTRACT.md`**); **5.4** thin follow-up layer (**shipped** — **`SYSTEM_EVOLUTION.md`** §12.4); **5.5** optional LLM **retrieval query planner** (**`src/query_planner.py`**, **`API_CONTRACT.md`** — *Phase 5.5*) |
 | **Core pipeline** | Parse → route → retrieve / rerank → prompt → LLM → optional **explanation** | **Implemented** (Phases 1–4.5 + **5.1**) |
 | **Future analytics** | Intent router → ML / statistical **tools** (not LLM-only math) | **Phase 6** — **planned** (see **`ML_CAPABILITIES_ROADMAP.md`**) |
 
@@ -33,7 +33,9 @@ Answer user questions **only from retrieved review chunks**, with observable **r
 ```
 User (string or API caller)
     → [optional: HTTP POST /query — Phase 5.2; Streamlit UI — Phase 5.3]
+    → [optional: follow-up resolver — Phase 5.4 conversation_context]
     → QueryParser → RetrievalRequest
+    → [optional: LLM query planner — Phase 5.5 when query_planner enabled]
     → apply_selective_rerank_policy
     → retrieval_strategy → Retriever (FAISS, filter, optional hybrid)
     → [optional] cross-encoder rerank

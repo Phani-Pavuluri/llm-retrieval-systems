@@ -16,6 +16,12 @@ PYTHONPATH=. uvicorn src.api:app --host 127.0.0.1 --port 8000
 PYTHONPATH=. streamlit run ui/chat_ui.py
 ```
 
+Or (same app; wrapper pins host/port):
+
+```bash
+PYTHONPATH=. python scripts/run_chat_ui.py
+```
+
 ## Tests
 
 ```bash

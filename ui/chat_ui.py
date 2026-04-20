@@ -4,7 +4,8 @@ Phase 5.3 — Minimal Streamlit chat UI (thin HTTP client to Phase 5.2 API).
 Run from repo root:
   PYTHONPATH=. streamlit run ui/chat_ui.py
 
-Or: python scripts/run_chat_ui.py
+Or (wrapper; pins Streamlit bind defaults):
+  PYTHONPATH=. python scripts/run_chat_ui.py
 """
 from __future__ import annotations
 
@@ -67,6 +68,7 @@ elif st.session_state.health_ok is True:
     st.sidebar.success("API health: ok")
 
 st.sidebar.header("Advanced (optional)")
+query_planner = False
 with st.sidebar.expander("Overrides", expanded=False):
     _back_opts = ("(API default)", "ollama", "openai")
     _bi = st.selectbox("LLM backend", range(len(_back_opts)), format_func=lambda i: _back_opts[i])
@@ -89,6 +91,12 @@ with st.sidebar.expander("Overrides", expanded=False):
     k_val = None if int(k_raw) == 0 else int(k_raw)
     rn_raw = st.number_input("rerank_top_n", min_value=0, value=0, help="0 = omit / API default")
     rerank_top_n = None if int(rn_raw) == 0 else int(rn_raw)
+
+    query_planner = st.checkbox(
+        "LLM query planner (retrieval)",
+        value=False,
+        help="Optional: one extra LLM call proposes validated retrieval_query_text / rating filters before vector search.",
+    )
 
 # --- Main: query ---
 if "turns" not in st.session_state:
@@ -114,6 +122,7 @@ if submitted:
             rerank_model=rerank_model,
             rerank_top_n=rerank_top_n,
             conversation_context=conv_ctx,
+            query_planner=query_planner,
         )
         url = f"{base_norm}/query"
         try:

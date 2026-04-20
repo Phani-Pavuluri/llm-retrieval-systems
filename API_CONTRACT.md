@@ -1,4 +1,4 @@
-# HTTP API contract (Phase 5.2) + Chat UI (Phase 5.3)
+# HTTP API contract (Phase 5.2) + Chat UI (Phase 5.3) + optional query planner (Phase 5.5)
 
 Minimal **backend-only** JSON API over `RAGPipeline.answer()` (Phase 5.2). No authentication, persistence, sessions, streaming, or heavy frontend in the API itself.
 
@@ -24,7 +24,7 @@ PYTHONPATH=. python scripts/run_api.py
 
 ## Chat UI (Phase 5.3)
 
-Minimal **Streamlit** app: **`ui/chat_ui.py`**. It only uses **`requests`** against **`GET /health`** and **`POST /query`** — no retrieval, rerank, prompt, or explanation logic in the UI layer.
+Minimal **Streamlit** app: **`ui/chat_ui.py`**. It only uses **`requests`** against **`GET /health`** and **`POST /query`** — no retrieval, rerank, prompt, or explanation logic in the UI layer. The sidebar includes an optional **LLM query planner (retrieval)** checkbox; when enabled, requests include **`query_planner`: true** (see Phase 5.5).
 
 **Run (API must already be listening):**
 
@@ -37,29 +37,40 @@ PYTHONPATH=. uvicorn src.api:app --host 127.0.0.1 --port 8000
 PYTHONPATH=. streamlit run ui/chat_ui.py
 ```
 
-Or UI only: `PYTHONPATH=. python scripts/run_chat_ui.py` (defaults to `http://127.0.0.1:8501`).
+Or UI launcher (same app; pins Streamlit defaults):
+
+```bash
+PYTHONPATH=. python scripts/run_chat_ui.py
+```
+
+(Streamlit defaults to `http://127.0.0.1:8501` in `scripts/run_chat_ui.py`.)
 
 **API base URL for the UI:** environment variable **`CHAT_API_BASE`** (default `http://127.0.0.1:8000`) or the sidebar field in the app.
 
 **Session strip:** Any “history” in the UI is **Streamlit `st.session_state` only** (browser session, not sent to the server). Each **`POST /query`** is still **stateless** on the backend.
 
-## Planned: Phase 5.4 (thin conversation layer)
+## Phase 5.4 (thin conversation layer)
 
-**Not shipped yet.** Goal: optional **conversation context** on the client and/or API request body so follow-ups (“What about one-star?”, “Shorter”, “Why?”) can be **resolved into a single normalized query + filters** before the existing **`POST /query`** pipeline runs—**without** making retrieval stateful, **without** long-term memory or DB chat logs, and **without** stuffing raw multi-turn history into the LLM prompt.
+**Shipped (additive).** The client may send a bounded **`conversation_context`** payload (recent turns only). The API runs a **rule-based resolver** first to produce a **`resolved_query`** string (and optional filter / family / explain / formatting hints) before calling the existing **`RAGPipeline.answer()`** path.
 
-**Explicit non-goal:** Phase **5.4** does **not** target **long-horizon memory**, **user-profile** persistence, or **autonomous tool-planning / multi-agent** dialogue—only **short-term, structured** carryover with auditable resolution.
+**Hard constraints (by design):**
 
-**Backward compatibility (must hold when implemented):**
+- Backend remains **stateless per request** (no server-side chat DB).
+- No long raw transcript stuffing: only a **small structured** context object.
+- Resolver is **heuristic / rule-first**; retrieval internals stay unchanged.
 
-- Requests **without** conversation fields behave **identically** to Phase **5.2** today.  
-- **`conversation_context`** / `conversation_id` (if any) are **optional** request keys.  
-- **`resolved_query_text`**, **`followup_resolution_applied`**, and related fields on the response are **optional** so existing clients keep working.
+**Backward compatibility:** requests **without** `conversation_context` behave like Phase **5.2**.
 
-**Likely request additions (additive):** e.g. `conversation_id` and/or a **`conversation_context`** object built from a **bounded turn summary** (see **PRODUCT_ROADMAP.md** — fixed fields: `user_query_raw`, `resolved_query_text`, `query_family`, `filters`, capped `answer_summary`, `evidence_chunk_ids`, `explain_used`). **Likely response additions:** e.g. `original_user_text`, **`resolved_query_text`**, **`followup_resolution_applied`**, which prior fields were reused.
+## Phase 5.5 — LLM query planner (retrieval, optional)
 
-**Precedence / anti-carry-forward:** When multiple follow-up cues appear in one message, **scope refinement precedes output refinement** (and other ordering rules); prior context is **not** reused on explicit reset, cold topic, idle timeout, or drift heuristics—see **`PRODUCT_ROADMAP.md`** and **`SYSTEM_EVOLUTION.md`** §12.4.
+**Shipped (additive).** Before retrieval, the pipeline may run a **small structured LLM call** that proposes optional adjustments to the parsed **`RetrievalRequest`**: paraphrased **`query_text`** for embedding / lexical overlap, optional **`review_rating`** metadata filter, and optional **`query_family`** (allowlisted only). The model output is **JSON-parsed and validated**; invalid or empty plans are ignored.
 
-**Implementation sketch:** `src/conversation_state.py` (turn state), `src/followup_resolver.py` (heuristic follow-up detection + rule-based merge / rewrite) → then today’s **`RAGPipeline.answer()`** unchanged in spirit; UI stores turns and passes context into the resolver path.
+**When it runs**
+
+- Controlled per request by **`query_planner`** (boolean or `null`). If omitted, the server uses **`config.QUERY_PLANNER_DEFAULT`** (currently **`false`** so behavior matches pre-planner deployments unless callers opt in).
+- The planner is **skipped** when: it is disabled; the rule-based parser already extracted a **`review_rating`** filter for the same utterance (avoids a redundant LLM call); or **`filter_overrides` / `reset_filters`** were applied (typical follow-up path) **and** the merged request already has **`review_rating`** in **`filters`**—so explicit resolver scope is not overridden.
+
+**Costs and tradeoffs:** one extra LLM generation per enabled request (latency + tokens); retrieval pool can change vs rules-only parsing—enable explicitly until tuned for your traffic.
 
 ## Endpoints
 
@@ -85,6 +96,8 @@ Returns:
 | `selective_rerank` | no | boolean or null | Omit to use `config.RERANK_SELECTIVE`. |
 | `rerank_model` | no | string or null | Cross-encoder id when rerank runs. |
 | `rerank_top_n` | no | integer ≥ 1 or null | Passed through to `RetrievalRequest`. |
+| `conversation_context` | no | object or null | Optional bounded turns for follow-up resolution (see `src/conversation_state.py`). |
+| `query_planner` | no | boolean or null | If `true`, allow the optional LLM retrieval planner (`src/query_planner.py`). If `null`/omitted, use `config.QUERY_PLANNER_DEFAULT`. |
 
 **Example**
 
@@ -109,7 +122,17 @@ Illustrative values; your `answer` and `metadata` will differ per query and envi
     "prompt_template_id": "family_abstract_complaint_summary",
     "llm_backend": "ollama",
     "llm_model": "llama3",
-    "selective_rerank_effective": true
+    "selective_rerank_effective": true,
+    "user_query": "What complaints appear in reviews?",
+    "resolved_query": "What complaints appear in reviews?",
+    "is_followup": false,
+    "followup_type": "none",
+    "reused_fields": [],
+    "filters_applied": {},
+    "chunk_ids_used": [],
+    "retrieval_query_text": "What complaints appear in reviews?",
+    "query_plan": null,
+    "explain_used": false
   }
 }
 ```
@@ -213,6 +236,8 @@ Top-level JSON:
 - `prompt_template_id`  
 - `llm_backend`, `llm_model` — effective generation backend/model for this call  
 - `selective_rerank_effective` — boolean selective policy value used for this request  
+- `retrieval_query_text` — string passed into retrieval after parse (and optional planner); may differ from `resolved_query` when the planner paraphrases.  
+- `query_plan` — structured planner result (`null` or a dict with fields such as `applied`, `source`, `notes`, `filters_patch`); see `src/query_planner.QueryPlanResult`.  
 - `answer_trace_path` — present only when answer tracing wrote a path (see *Answer tracing*)
 
 ### Explainability notes
@@ -258,8 +283,12 @@ These **`metadata` keys are stable** for Phase 5.2 consumers — treat them as p
 | `llm_model` | Stable |
 | `selective_rerank_effective` | Stable |
 | `answer_trace_path` | Stable **when present** (optional key; see *Answer tracing*) |
+| `retrieval_query_text` | Stable (string or `null`) |
+| `query_plan` | Stable (object or `null`; internal fields are diagnostic and may evolve additively) |
 
-**Additive policy:** New **`metadata`** keys may appear in future releases (e.g. timing, strategy ids). Clients should **ignore unknown keys** and must not assume every key is always present except the five always-emitted fields above (the sixth, `answer_trace_path`, is conditional). **Renaming or removing** a documented stable key requires an explicit **API version** bump or a documented breaking-change release.
+**Additive policy:** New **`metadata`** keys may appear in future releases (e.g. timing, strategy ids). Clients should **ignore unknown keys**. Keys listed in the **Stable** table above are contractually stable; some rows are **conditional** (e.g. `answer_trace_path` only when tracing wrote a file). **Renaming or removing** a documented stable key requires an explicit **API version** bump or a documented breaking-change release.
+
+**Phase 5.2+ conversation metadata:** Current responses also emit **`user_query`**, **`resolved_query`**, **`is_followup`**, **`followup_type`**, **`reused_fields`**, **`filters_applied`**, **`chunk_ids_used`**, and **`explain_used`** (see **`src/api.py`**). Omitting a key from the stability table means it is still **additive / wire-stable** in practice until promoted into the table explicitly.
 
 Top-level success fields **`answer`**, **`explanation`**, **`metadata`** are stable; the internal shape of **`explanation`** when non-null is defined in **SYSTEM_OVERVIEW.md** / **SYSTEM_EVOLUTION.md** (evidence / reasoning_summary / confidence only).
 

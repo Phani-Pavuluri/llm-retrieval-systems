@@ -5,6 +5,7 @@ Builds a single user message for existing OpenAI/Ollama backends. Does not call 
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -74,13 +75,74 @@ def format_evidence_block(retrieved: pd.DataFrame) -> tuple[str, list[str]]:
         cid = str(row.get("chunk_id", ""))
         ids.append(cid)
         text = row.get("text", "")
-        lines.append(f"[Chunk {i} | id={cid}]\n{text}")
+        meta = _excerpt_metadata_kv(row)
+        meta_s = "".join(f" | {k}={v}" for k, v in meta)
+        lines.append(f"[Chunk {i} | chunk_id={cid}{meta_s}]\n{text}")
     return "\n\n".join(lines), ids
+
+
+def _clean_meta_scalar(val: Any) -> str | None:
+    if val is None:
+        return None
+    if isinstance(val, float) and pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() == "nan":
+        return None
+    s = re.sub(r"\s+", " ", s)
+    return s
+
+
+def _asin_from_chunk_id(chunk_id: str) -> str | None:
+    """
+    Chunks built by ``scripts/build_chunks.py`` use ``{asin}_{row_idx}_{chunk_idx}``.
+    ASINs are typically alphanumerics starting with ``B`` in this dataset.
+    """
+    m = re.match(r"^(B[0-9A-Z]{8,})_", chunk_id or "")
+    if not m:
+        return None
+    return m.group(1)
+
+
+def _excerpt_metadata_kv(row: pd.Series) -> list[tuple[str, str]]:
+    """
+    Deterministic metadata copied from dataframe columns (no inference).
+
+    Order is stable for readability; omit keys with no usable value.
+    """
+    cid = _clean_meta_scalar(row.get("chunk_id")) or ""
+    out: list[tuple[str, str]] = []
+
+    asin = _clean_meta_scalar(row.get("asin"))
+    if not asin:
+        asin = _clean_meta_scalar(row.get("product_id"))
+    if not asin:
+        asin = _clean_meta_scalar(row.get("source_id"))
+    if not asin:
+        asin = _asin_from_chunk_id(cid)
+
+    brand = _clean_meta_scalar(row.get("brand"))
+    review_title = _clean_meta_scalar(row.get("review_title"))
+    category = _clean_meta_scalar(row.get("category"))
+    sub_category = _clean_meta_scalar(row.get("sub_category"))
+
+    if asin:
+        out.append(("asin", asin))
+    if brand:
+        out.append(("brand", brand))
+    if review_title:
+        out.append(("review_title", review_title))
+    if category:
+        out.append(("category", category))
+    if sub_category:
+        out.append(("sub_category", sub_category))
+    return out
 
 
 _GROUNDING_RULES = """Grounding rules (non-negotiable):
 - Use ONLY information supported by the excerpts above. If the excerpts do not contain enough information, say so clearly (e.g. start with "Insufficient evidence in the retrieved excerpts to …").
 - Do NOT invent product names, ratings, dates, or review quotes that are not in the excerpts.
+- Each excerpt header may include deterministic metadata (e.g. ``asin=…``, ``brand=…``, ``review_title=…``) copied from the retrieval table. When present, treat these as authoritative identifiers; copy them exactly and do not substitute different brands/titles from memory.
 - If excerpts conflict, acknowledge the conflict briefly instead of smoothing it away.
 - Cite evidence by referring to "Chunk N" when helpful; do not fabricate chunk content."""
 

@@ -16,6 +16,7 @@ from src.retrieval_request import RetrievalRequest
 from src.retrieval_strategy import apply_strategy_to_request
 from src.explanation_builder import build_explanation_payload
 from src.evidence_negation_filter import filter_absence_focused_excerpts
+from src.query_planner import maybe_apply_query_planner
 from src.retrieval_with_rerank import retrieve_with_optional_rerank
 from src.retriever import Retriever
 
@@ -72,6 +73,7 @@ class RAGPipeline:
         query_family_override: str | None = None,
         output_style_hints: dict[str, Any] | None = None,
         reset_filters: bool = False,
+        query_planner: bool | None = None,
     ) -> dict:
         if use_parser:
             request = self.query_parser.parse(query, top_k=k)
@@ -86,6 +88,26 @@ class RAGPipeline:
             request.filters = merged
         if query_family_override and str(query_family_override).strip():
             request.query_family = str(query_family_override).strip()
+
+        planner_enabled = (
+            bool(config.QUERY_PLANNER_DEFAULT)
+            if query_planner is None
+            else bool(query_planner)
+        )
+        plan = maybe_apply_query_planner(
+            enabled=planner_enabled,
+            user_query=query,
+            request=request,
+            llm=self.llm,
+            parser=self.query_parser,
+            skip_if_followup_filters=bool(filter_overrides) or bool(reset_filters),
+        )
+        trace_extra_effective = trace_extra
+        if plan.source != "none":
+            if trace_extra_effective is not None and isinstance(trace_extra_effective, dict):
+                trace_extra_effective = {**trace_extra_effective, "query_plan": plan.__dict__}
+            elif trace_extra_effective is None:
+                trace_extra_effective = {"query_plan": plan.__dict__}
 
         if use_hybrid is not None:
             request.use_hybrid = use_hybrid
@@ -107,19 +129,22 @@ class RAGPipeline:
         if rerank_model is not None:
             request.rerank_model = rerank_model
 
-        retrieved = self._retrieve_chunks(request, trace_extra=trace_extra)
+        retrieved = self._retrieve_chunks(request, trace_extra=trace_extra_effective)
 
         original = request.original_query or query
         retrieved_for_prompt, absence_filter_stats = filter_absence_focused_excerpts(
             retrieved,
             user_question=original,
         )
-        trace_extra_effective = trace_extra
         if trace_extra_effective is not None and isinstance(trace_extra_effective, dict):
             trace_extra_effective = {
                 **trace_extra_effective,
                 "absence_excerpt_filter": absence_filter_stats,
             }
+        elif trace_extra_effective is None and (
+            not absence_filter_stats.get("skipped") or planner_enabled
+        ):
+            trace_extra_effective = {"absence_excerpt_filter": absence_filter_stats}
 
         built = build_answer_prompt(
             request,
@@ -179,12 +204,14 @@ class RAGPipeline:
             "chunk_ids_used": built.chunk_ids,
             "llm_backend": eff_backend,
             "llm_model": llm_model,
+            "query_plan": plan.__dict__,
         }
         if answer_trace_path is not None:
             out["answer_trace_path"] = str(answer_trace_path)
         if explain:
             diag = dict(self.retriever.last_retrieval_diagnostics or {})
             diag["absence_excerpt_filter"] = absence_filter_stats
+            diag["query_plan"] = plan.__dict__
             out["explanation"] = build_explanation_payload(
                 request=request,
                 retrieved=retrieved_for_prompt,

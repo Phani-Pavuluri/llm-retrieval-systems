@@ -24,6 +24,7 @@ def build_query_json(
     rerank_model: str | None = None,
     rerank_top_n: int | None = None,
     conversation_context: dict[str, Any] | None = None,
+    query_planner: bool | None = None,
 ) -> dict[str, Any]:
     """Body for POST /query; omits optional keys when None so the API uses server defaults."""
     body: dict[str, Any] = {"query": query.strip(), "explain": bool(explain)}
@@ -41,6 +42,8 @@ def build_query_json(
         body["rerank_top_n"] = int(rerank_top_n)
     if conversation_context is not None:
         body["conversation_context"] = conversation_context
+    if query_planner:
+        body["query_planner"] = True
     return body
 
 

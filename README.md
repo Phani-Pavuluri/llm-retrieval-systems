@@ -1,6 +1,6 @@
 # LLM Retrieval Systems (RAG shell)
 
-Rule-based **query → retrieval → (optional) rerank → prompt → LLM** pipeline over chunked review text, with **traces**, **manual answer eval**, and **selective reranking**.
+Rule-based **query → retrieval → (optional) rerank → prompt → LLM** pipeline over chunked review text, with **traces**, **manual answer eval**, and **selective reranking**. An **optional LLM query planner** (Phase **5.5**, off by default) can adjust retrieval **`query_text`** / filters before retrieve—see **`API_CONTRACT.md`** and **`SYSTEM_EVOLUTION.md`** §12.5.
 
 ## Stack (short)
 

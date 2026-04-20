@@ -48,6 +48,12 @@ class TestBuildQueryJson(unittest.TestCase):
         j = build_query_json(query="q", explain=False, conversation_context=ctx)
         self.assertEqual(j["conversation_context"], ctx)
 
+    def test_query_planner_only_when_true(self) -> None:
+        j_off = build_query_json(query="q", explain=False, query_planner=False)
+        self.assertNotIn("query_planner", j_off)
+        j_on = build_query_json(query="q", explain=False, query_planner=True)
+        self.assertTrue(j_on["query_planner"])
+
 
 class TestConversationContextFromHistory(unittest.TestCase):
     def test_builds_turns(self) -> None:

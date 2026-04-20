@@ -34,6 +34,7 @@ class QueryRequest(BaseModel):
     rerank_model: str | None = None
     rerank_top_n: int | None = Field(default=None, ge=1)
     conversation_context: dict[str, Any] | None = None
+    query_planner: bool | None = None
 
     @field_validator("llm_backend", "llm_model", "rerank_model", mode="before")
     @classmethod
@@ -85,11 +86,13 @@ def _map_to_api_response(
         "selective_rerank_effective": _selective_rerank_effective(body),
         "user_query": body.query.strip(),
         "resolved_query": res.resolved_query,
+        "retrieval_query_text": getattr(req, "query_text", None),
         "is_followup": bool(res.is_followup),
         "followup_type": res.followup_type,
         "reused_fields": list(res.resolver_metadata.get("reused_fields") or []),
         "filters_applied": dict(req.filters or {}),
         "chunk_ids_used": list(raw.get("chunk_ids_used") or []),
+        "query_plan": raw.get("query_plan"),
     }
     atp = raw.get("answer_trace_path")
     if atp:
@@ -140,6 +143,7 @@ def _run_query(pipeline: RAGPipeline, body: QueryRequest) -> QuerySuccessRespons
         query_family_override=res.query_family_override,
         output_style_hints=res.output_style_hints,
         reset_filters=bool(res.reset_filters),
+        query_planner=body.query_planner,
     )
 
     if effective_explain:
