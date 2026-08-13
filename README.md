@@ -12,12 +12,6 @@ The current implementation is demonstrated on **Amazon product reviews**, but th
 
 ## What this project demonstrates
 
-Most RAG examples stop at:
-
-```text
-Query → Vector Search → Prompt → LLM
-```
-
 This project focuses on the harder problems that appear once retrieval quality, answer quality, and system behavior need to be measured and controlled:
 
 * How should different query types retrieve differently?
